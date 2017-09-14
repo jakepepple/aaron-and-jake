@@ -1,11 +1,12 @@
 <template>
   <div id="app">
     <div class="topnav" id="myTopnav">
-      <a href="#home">Home</a>
-      <a href="#news">News</a>
-      <a href="#contact">Contact</a>
-      <a href="#about">About</a>
+      <router-link to="/home" >Home</router-link>
+      <router-link to="/profile">Profile</router-link>
+      <router-link to="/login">Login/signup</router-link>
+      <router-link to="/browse">Browse</router-link>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -48,5 +49,4 @@ export default {
     background-color: #4CAF50;
     color: white;
 }
-
 </style>
