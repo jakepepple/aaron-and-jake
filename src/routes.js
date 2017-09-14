@@ -1,8 +1,18 @@
-import test from './components/test.vue';
-//import showBlogs from './components/showBlogs.vue';
+import create from './components/create.vue';
+import event from './components/event.vue';
+import login from './components/login.vue';
+import profile from './components/profile.vue';
+import signup from './components/signup.vue';
+import home from './components/home.vue';
+import browse from './components/browse.vue';
 
 export default [
-    //{ path: '/', component: App},
-    //{ path: '/test', component: newComp}
-    //{ path: '/add', component: addBlog}
+    { path: '/home', component: home},
+    { path: '/profile', component: profile},
+    { path: '/login', component: login},
+    { path: '/event', component: event},
+    { path: '/create', component: create},
+    { path: '/signup', component: signup},
+    { path: '/browse', component: browse},
+
 ]
