@@ -9,6 +9,9 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "dotenv": "^4.0.0",
+    "sequelize": "^4.8.3",
+    "tedious": "^2.0.0",
     "vue": "^2.3.3"
   },
   "devDependencies": {
