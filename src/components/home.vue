@@ -1,26 +1,27 @@
 <template>
     <div id="Home">
         <p>Home Page</p>
-       
+
     </div>
 </template>
 
 <script>
 // Imports
 export default {
-    data () {
+    data() {
         return {
             data: {
-                name: 'test Page'
+                image: "../assets/food-salad-restaurant-person.jpg"
             }
-            
-            
+
+
         }
+       
     },
-    
+
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>
