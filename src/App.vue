@@ -22,6 +22,7 @@ export default {
 </script>
 
 <style>
+
 .topnav {
     background-color: #333;
     overflow: hidden;

@@ -11,7 +11,7 @@ export default {
     data () {
         return {
             data: {
-                name: 'test Page'
+                background: 'login'
             }
             
             
@@ -21,6 +21,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
+
 
 </style>
