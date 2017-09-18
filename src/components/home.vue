@@ -1,26 +1,30 @@
 <template>
-    <div id="Home">
+    <div id="app" >
         <p>Home Page</p>
-       
+        <div>
+            <span>Change my color</span>
+            <button></button>
+
+
+        </div>
+
     </div>
 </template>
 
 <script>
 // Imports
 export default {
-    data () {
+    data() {
         return {
-            data: {
-                name: 'test Page'
+            test: 'green',
+            styleObject: {
+                'color': "yellow"
             }
-            
-            
         }
     },
-    
 }
 </script>
 
-<style scoped>
+<style>
 
 </style>

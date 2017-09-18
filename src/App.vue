@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
+  <div id="app" >
     <div class="topnav" id="myTopnav">
-      <router-link to="/home" >Home</router-link>
+      <router-link to="/home"  >Home</router-link>
       <router-link to="/profile">Profile</router-link>
       <router-link to="/login">Login/signup</router-link>
       <router-link to="/browse">Browse</router-link>
@@ -11,17 +11,28 @@
 </template>
 
 <script>
+
+import login from './components/login.vue';
+
 export default {
-  name: 'app',
+  // components: {
+  //   'login': login
+
+  // },
   data() {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      styleObject: {
+                'color': "yellow"
+            }
+    
     }
-  }
+  },
+  
 }
 </script>
 
 <style>
+
 .topnav {
     background-color: #333;
     overflow: hidden;

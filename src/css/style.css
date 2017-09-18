@@ -1,0 +1,17 @@
+.home {
+    background: url(../assets/food-salad-restaurant-person.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+
+.login {
+    background: url(../assets/Walkthrough_03@3x.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+
+.test span {
+    color: blue
+}
