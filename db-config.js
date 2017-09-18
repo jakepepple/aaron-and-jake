@@ -1,4 +1,4 @@
-
+const passwordHash = require('password-hash');
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('dinner', 'buckeyedseminole', 'Opspark17', {
   host: 'whoscomingtodinner.database.windows.net',
@@ -36,27 +36,34 @@ const User = sequelize.define('user', {
   },
   City: {
     type: Sequelize.STRING
+  },
+  Password: {
+    type: Sequelize.STRING
   }
 });
 
 
 // TEST DB-USER CREATION & QUERY
-User.sync({force: true}).then(() => {
-  return User.create({
-    Name: 'Jake Pepple',
-    Host_Rating: 4,
-    Contributor_Rating: 4,
-    Email: 'jake@jake.com',
-    City: 'New Orleans'
-  });
-})
-.then(() => {
-  User.findAll({}).then((usersData) => {
-    console.log("Successful test post and query to db: ", usersData[0].dataValues);
-  }).catch((err) => {
-    console.log("error in querying database: ", err);
-  })
-});
+// User.sync({force: true}).then(() => {
+//   let hash = passwordHash.generate('test');
+//   //TEST password-hash
+//   User.findOrCreate({
+//     where: { Email: 'jake@test.com' }, defaults: {
+//       Name: 'Jake Test',
+//       Host_Rating: 0,
+//       Contributor_Rating: 0,
+//       Email: 'jake@jake.com',
+//       City: 'New Orleans',
+//       Password: hash
+//     }
+//   })
+//     .spread((user, created) => {
+//       console.log(user.get({ plain: true }));
+//       console.log(created);
+//     })
+// });
 
 
-exports.modules.User = User;
+
+
+module.exports.User = User;

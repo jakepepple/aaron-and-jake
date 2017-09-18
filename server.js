@@ -5,6 +5,8 @@ const config = require('./webpack.config.js');
 const webpackMiddleware = require('webpack-dev-middleware');
 const compiler = webpack(config);
 const path = require('path');
+const db = require('./db-config');
+const passwordHash = require('password-hash');
 require('dotenv').config();
 
 
@@ -46,7 +48,22 @@ app.get('/profile', (req, res, next) => {
 });
 
 app.post('/signup', (req, res, next) => {
-  
+  console.log(req.body);
+  let hash = passwordHash.generate(req.body.password);
+  //TEST password-hash
+  User.findOrCreate({
+    where: { Email: req.body.email }, defaults: {
+      Name: req.body.name,
+      Host_Rating: 0,
+      Contributor_Rating: 0,
+      City: req.body.city,
+      Password: hash
+    }
+  })
+    .spread((user, created) => {
+      console.log(user.get({ plain: true }));
+      console.log(created);
+    })
 });
 
 app.post('/create', (req, res, next) => {
