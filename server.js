@@ -16,7 +16,7 @@ const db = require('./db-config');
 const passwordHash = require('password-hash');
 //passport requirements
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+const JsonStrategy = require('passport-json').Strategy;
 
 
 const app = express();
@@ -44,20 +44,24 @@ app.use(allowCrossDomain);
 
 
 //passport strategy set-up
-passport.use(new LocalStrategy({
+passport.use('json', new JsonStrategy({
     usernameField: 'email',
   }, (username, password, done) => {
-    User.findOne({ username: username }, (err, user) => {
+    User.findOne({ email: username }, (err, user) => {
+      console.log('authenticating' );
       if (err) {
+        console.log(err)
         return done(err);
       }
       if (!user) {
+        console.log('no user');
         return done(null, false, { message: 'No user with that email in directory.' });
-
       }
-      if (!user.validPassword(password)) {
+      if (!passwordHash.verify(password, user.password)) {
+        console.log('wrong password');
         return done(null, false, { message: 'Incorrect password!' });
       }
+       console.log('Success login!')
       return done(null, user);
     })
   }
@@ -87,11 +91,12 @@ app.get('/browse', (req, res, next) => {
 
 app.post('/login', (req, res, next) => {
   //IN PROGRESS
-  // passport.authenticate('local', {
-  //   successRedirect: '/profile',
-  //   failureRedirect: '/login',
-  //   failureFlash: 'Incorrect email or password' 
-  // })
+  
+  passport.authenticate('json', {
+    successRedirect: '/profile',
+    failureRedirect: '/login',
+    failureFlash: 'Incorrect email or password' 
+  })
 });
 
 app.get('/profile', (req, res, next) => {
