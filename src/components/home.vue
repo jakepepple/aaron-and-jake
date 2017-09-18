@@ -1,6 +1,12 @@
 <template>
-    <div id="Home">
+    <div id="app" >
         <p>Home Page</p>
+        <div>
+            <span>Change my color</span>
+            <button></button>
+
+
+        </div>
 
     </div>
 </template>
@@ -10,15 +16,12 @@
 export default {
     data() {
         return {
-            data: {
-                image: "../assets/food-salad-restaurant-person.jpg"
+            test: 'green',
+            styleObject: {
+                'color': "yellow"
             }
-
-
         }
-       
     },
-
 }
 </script>
 
