@@ -31,7 +31,7 @@ const User = sequelize.define('user', {
   Contributor_Rating: {
     type: Sequelize.INTEGER
   },
-  Phone_Number: {
+  Email: {
     type: Sequelize.STRING
   },
   City: {
@@ -39,12 +39,14 @@ const User = sequelize.define('user', {
   }
 });
 
+
+// TEST DB-USER CREATION & QUERY
 User.sync({force: true}).then(() => {
   return User.create({
     Name: 'Jake Pepple',
     Host_Rating: 4,
     Contributor_Rating: 4,
-    Phone_Number: '7729790088',
+    Email: 'jake@jake.com',
     City: 'New Orleans'
   });
 })
@@ -57,4 +59,4 @@ User.sync({force: true}).then(() => {
 });
 
 
-
+exports.modules.User = User;
