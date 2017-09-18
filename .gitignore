@@ -4,7 +4,7 @@ dist/
 npm-debug.log
 yarn-error.log
 .env
-.recipe-api-keys.js
+recipe-api-keys.js
 
 # Editor directories and files
 .idea
