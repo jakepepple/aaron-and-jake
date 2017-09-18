@@ -42,50 +42,19 @@ const User = sequelize.define('user', {
 User.sync({force: true}).then(() => {
   return User.create({
     Name: 'Jake Pepple',
-    Host_Rating: 3,
+    Host_Rating: 4,
     Contributor_Rating: 4,
     Phone_Number: '7729790088',
     City: 'New Orleans'
   });
+})
+.then(() => {
+  User.findAll({}).then((usersData) => {
+    console.log("Successful test post and query to db: ", usersData[0].dataValues);
+  }).catch((err) => {
+    console.log("error in querying database: ", err);
+  })
 });
-// const Connection = require('tedious').Connection;
-// const Request = require('tedious').Request;
 
-// const config = {
-//   userName: 'buckeyedseminole',
-//   password: 'Opspark17',
-//   server: 'whoscomingtodinner.database.windows.net',
-//   options: {
-//     database: 'dinner',
-//     encrypt: true,
-//   },
-// };
-// const connection = new Connection(config);
 
-// const queryDatabase = () => {
-//   console.log('Reading rows from the Table...');
 
-//   // Read all rows from table
-//   request = new Request(
-//     "SELECT * FROM Users",
-//     function (err, rowCount, rows) {
-//       console.log(rowCount + ' row(s) returned');
-//       process.exit();
-//     }
-//   );
-
-//   request.on('row', function (columns) {
-//     columns.forEach(function (column) {
-//       console.log("%s\t%s", column.metadata.colName, column.value);
-//     });
-//   });
-//   connection.execSql(request);
-// }
-
-// connection.on('connect', (err) => {
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     queryDatabase();
-//   }
-// });
