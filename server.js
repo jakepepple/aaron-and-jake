@@ -14,6 +14,7 @@ const compiler = webpack(webpackConfig);
 //database requirements
 const db = require('./db-config');
 const passwordHash = require('password-hash');
+const User = db.User;
 //passport requirements
 const passport = require('passport');
 const JsonStrategy = require('passport-json').Strategy;
@@ -44,25 +45,42 @@ app.use(allowCrossDomain);
 
 
 //passport strategy set-up
-passport.use('json', new JsonStrategy({
-    usernameField: 'email',
-  }, (username, password, done) => {
-    User.findOne({ email: username }, (err, user) => {
-      console.log('authenticating' );
-      if (err) {
-        console.log(err)
-        return done(err);
-      }
+passport.use(new JsonStrategy({
+    usernameProp: 'email',
+    passwordProp: 'password',
+    passReqToCallback: true
+  }, (req, username, password, done) => {
+    User.findOne({ where: { email: username }}).then((user) => {
+      console.log('authenticating' );    
       if (!user) {
         console.log('no user');
         return done(null, false, { message: 'No user with that email in directory.' });
       }
-      if (!passwordHash.verify(password, user.password)) {
+      if (!passwordHash.verify(password, user.dataValues.Password)) {
+        console.log(password, user);
         console.log('wrong password');
         return done(null, false, { message: 'Incorrect password!' });
       }
-       console.log('Success login!')
+      console.log('about to serialize');
+      passport.serializeUser((user, done) => {
+        
+        return done(null, user.id);
+      })
+      passport.deserializeUser((id, done) => {
+        User.findById(id).then((user) => {
+          if (user) {
+            done(null, user.get());
+          } else {
+            done(user.errors, null);
+          }
+        })
+      })
       return done(null, user);
+
+    })
+    .catch((err) => {
+      console.log('error logging in:', err);
+      return done(err)
     })
   }
 ))
@@ -78,7 +96,6 @@ app.use(passport.session());
 
 
 
-
 app.get('/browse', (req, res, next) => {
   //IN PROGRESS
   // console.log('connected');
@@ -89,18 +106,25 @@ app.get('/browse', (req, res, next) => {
   // next();
 });
 
-app.post('/login', (req, res, next) => {
+app.post('/login', passport.authenticate('json', {failureRedirect: '/login'}), (req, res) => {
   //IN PROGRESS
   
-  passport.authenticate('json', {
-    successRedirect: '/profile',
-    failureRedirect: '/login',
-    failureFlash: 'Incorrect email or password' 
-  })
+  console.log('logging in success')
+  console.log(res)
+  res.status(201).send(`Successfully logged in as: ${req.body.email}`);
+  // passport.authenticate('json', {
+  //   successRedirect: '/profile',
+  //   failureRedirect: '/login',
+  //   failureFlash: 'Incorrect email or password' 
+  // })
 });
 
 app.get('/profile', (req, res, next) => {
-
+  if (session.user) {
+    res.status(200).send('Logged in: Profile access granted');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 app.post('/signup', (req, res, next) => {
@@ -108,7 +132,7 @@ app.post('/signup', (req, res, next) => {
   console.log(req.body);
   let hash = passwordHash.generate(req.body.password);
   //TEST password-hash
-  let User = db.User;
+  
   User.findOrCreate({
     where: { Email: req.body.email }, defaults: {
       Name: req.body.name,
