@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         login: function() {
-            this.$http.post('http://185548d4.ngrok.io/login', {
+            this.$http.post('/login', {
                 email: this.loginData.email,
                 password: this.loginData.password
             }).then(function(data, status, response) {

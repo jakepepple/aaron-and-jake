@@ -31,7 +31,7 @@ export default {
     },
     methods: {
         signUp() {
-            this.$http.post('http://185548d4.ngrok.io/signup', {
+            this.$http.post('/signup', {
                 name: this.signUpForm.name,
                 password: this.signUpForm.password,
                 city: this.signUpForm.city,

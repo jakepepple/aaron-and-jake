@@ -29,10 +29,11 @@ app.use(webpackMiddleware(compiler, {
 
 //vue middleware
 const vueOptions = {
-  rootPath: path.join(__dirname, './src'), 
+  rootPath: path.join(__dirname, '/dist/'), 
 };
 const expressVueMiddleWare = expressVue.init(vueOptions);
 app.use(expressVueMiddleWare);
+app.use(express.static(path.join(__dirname, '/dist/')));
 
 //cross domain access
 var allowCrossDomain = (req, res, next) => {
@@ -93,6 +94,10 @@ app.use(passport.session());
 
 
 //Routes:
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/index.html'))
+})
 
 
 
