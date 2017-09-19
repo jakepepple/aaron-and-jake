@@ -5,6 +5,7 @@
       <router-link to="/profile">Profile</router-link>
       <router-link to="/login">Login/signup</router-link>
       <router-link to="/browse">Browse</router-link>
+       <router-link to="/create">Create</router-link>
     </div>
     <router-view></router-view>
   </div>
