@@ -164,13 +164,13 @@ app.post('/create', (req, res, next) => {
 
 
 
-// const port = process.env.PORT;
+const port = process.env.PORT;
 
-// app.listen(port, () => {
-//   console.log(`app listening on port ${port}`);
-// });
+app.listen(port, () => {
+  console.log(`app listening on port ${port}`);
+});
 
 //TEST SERVER
-app.listen(80, 'localhost', function() {
-  console.log('successfully hosting on 3001');
-})
+// app.listen(80, 'localhost', function() {
+//   console.log('successfully hosting on 3001');
+// })
