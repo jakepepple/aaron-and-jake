@@ -1,5 +1,10 @@
 <template>
     <div id="app">
+         <form>
+            <label>Recipe lookup</label>
+            <input type='text' v-model="food" placeholder="meal lookup">
+            <button @click.prevent="lookUp">lookUp</button>
+        </form>
         <form>
             <label>Create Event</label><br/>
             <label>Event Name:</label>
@@ -12,21 +17,11 @@
             <input type="text" v-model="eventData.meal" placeholder="Event Meal"><br/>
             <button @click.prevent="create">Create Event</button>
         </form>
-
-        <form>
-            <label>Recipe lookup</label>
-            <input type='text' v-model="food" placeholder="meal lookup">
-            <button @click.prevent="create">lookUp</button>
-
-        </form>
-
-        <ul >
-            <li v-repeat="arr in this.array">{{arr}}</li>
-        </ul>
-
-
-
-
+         <div v-if="list">
+            <img v-bind:src="this.recipes[0].recipe.image">
+            <p>Dish: {{this.recipes[0].recipe.label}}</p>
+            <p>Ingredients: {{this.recipes[0].recipe.ingredientLines}}</p>
+        </div>
     </div>
 </template>
 
@@ -37,7 +32,8 @@ export default {
         return {
             food: '',
             list: false,
-            array: [1,2,3,4,5],
+            recipe: '',
+            recipes: '',
             eventData:{
                 name: '',
                 time: '',
@@ -72,7 +68,7 @@ export default {
                 }
                 ).then(function(response) {
                     this.list = true;
-                this.meals = response.body.hits
+                this.recipes = response.body.hits
             })
 
         }
