@@ -21,6 +21,10 @@
             <img v-bind:src="this.recipes[0].recipe.image">
             <p>Dish: {{this.recipes[0].recipe.label}}</p>
             <p>Ingredients: {{this.recipes[0].recipe.ingredientLines}}</p>
+            <ul>
+                <li v-for="it in this.recipes[0].recipe.ingredientLines">{{it}}</li>
+            </ul>
+           <p> <a v-bind:href="this.recipes[0].recipe.shareAs">click me</a> </p>
         </div>
     </div>
 </template>
