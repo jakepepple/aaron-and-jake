@@ -17,17 +17,8 @@
             <input type="text" v-model="eventData.meal" placeholder="Event Meal"><br/>
             <button @click.prevent="create">Create Event</button>
         </form>
-        <!-- <div v-if="list" v-bind:recipes='meals'>
-                <img v-bind:src="this.recipes[0].recipe.image">
-                <p>Dish: {{this.recipes[0].recipe.label}}</p>
-                <p>Ingredients: {{this.recipes[0].recipe.ingredientLines}}</p>
-                <ul>
-                    <li v-for="meal in meals">{{it}}</li>
-                </ul>
-               <p> <a v-bind:href="this.recipes[0].recipe.shareAs">click me</a> </p>
-            </div> -->
-            
-            <recipes v-if="list" v-bind:meals="meals"></recipes>
+
+        <recipes v-if="populateList" v-bind:meals="meals" v-bind:populateList="populateList" v-on:hideList="hideList($event)"></recipes>
     </div>
 </template>
 
@@ -41,7 +32,7 @@ export default {
     data() {
         return {
             food: '',
-            list: false,
+            populateList: false,
             meals: [],
             eventData: {
                 name: '',
@@ -76,10 +67,13 @@ export default {
                     }
                 }
             ).then(function(response) {
-                this.list = true;
+                this.populateList = true;
                 this.meals = response.body.hits
             })
 
+        },
+        hideList(change) {
+            this.populateList = change;
         }
     }
 }
