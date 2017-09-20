@@ -38,7 +38,7 @@ export default {
                 name: '',
                 time: '',
                 location: '',
-                meals: ''
+                meal: ''
             }
         }
     },
@@ -48,6 +48,7 @@ export default {
                 name: this.eventData.name,
                 time: this.eventData.time,
                 location: this.eventData.location,
+                meal: this.eventData.meal
             }).then(function(response) {
                 this.array = response.body
                 this.list = true
@@ -73,7 +74,8 @@ export default {
 
         },
         hideList(change) {
-            this.populateList = change;
+            this.populateList = change[0];
+            this.eventData.meal = change[1]; 
         }
     }
 }
