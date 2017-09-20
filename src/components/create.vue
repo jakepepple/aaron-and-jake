@@ -1,9 +1,7 @@
 <template>
     <div id="app">
         <form>
-            <label>Recipe lookup</label>
-            <input type='text' v-model="food" placeholder="meal lookup">
-            <button @click.prevent="lookUp">lookUp</button>
+            
         </form>
         <form>
             <label>Create Event</label><br/>
@@ -13,15 +11,18 @@
             <input type="text" v-model="eventData.time" placeholder="Event Time"><br/>
             <label>Event Location:</label>
             <input type="text" v-model="eventData.location" placeholder="Event Location"><br/>
-            <label>Event Meal:</label>
-            <input type="text" v-model="eventData.meal" placeholder="Event Meal"><br/>
+            <!-- <label>Event Meal:</label>
+            <input type="text" v-model="eventData.meal" placeholder="Event Meal"><br/> -->
+            <label>Recipe lookup</label>
+            <input type='text' v-model="food" placeholder="meal lookup">
+            <button @click.prevent="lookUp">lookUp</button><br/>
             <button @click.prevent="create">Create Event</button>
         </form>
 
         <recipes v-if="populateList" v-bind:meals="meals" v-bind:populateList="populateList" v-on:hideList="hideList($event)"></recipes>
     </div>
 </template>
-
+<label>Create Event</label><br/>
 <script>
 // Imports
 import recipes from './recipes.vue';
