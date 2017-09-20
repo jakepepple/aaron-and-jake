@@ -11,8 +11,6 @@
             <input type="text" v-model="eventData.time" placeholder="Event Time"><br/>
             <label>Event Location:</label>
             <input type="text" v-model="eventData.location" placeholder="Event Location"><br/>
-            <!-- <label>Event Meal:</label>
-            <input type="text" v-model="eventData.meal" placeholder="Event Meal"><br/> -->
             <label>Recipe lookup</label>
             <input type='text' v-model="food" placeholder="meal lookup">
             <button @click.prevent="lookUp">lookUp</button><br/>
@@ -45,7 +43,7 @@ export default {
     },
     methods: {
         create: function() {
-            this.$http.post('http://jsonplaceholder.typicode.com/posts', {
+            this.$http.post('http://61e83bf3.ngrok.io/create', {
                 name: this.eventData.name,
                 time: this.eventData.time,
                 location: this.eventData.location,
