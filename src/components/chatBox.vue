@@ -1,6 +1,11 @@
 <template>
-    <div>
-       
+    <div id="chat-box">
+        <div id="chat-window">
+            <div id="output"></div>
+        </div>
+        <input id="handle" type="text" placeholder="Handle">
+        <input id="message" type="text" placeholder="Message">
+        <button id="send">Send</button>
     </div>
 </template>
 
@@ -25,7 +30,7 @@ h2{
     color: #575ed8;
 }
 
-#mario-chat{
+#chat-box{
     max-width: 600px;
     margin: 30px auto;
     border: 1px solid #ddd;

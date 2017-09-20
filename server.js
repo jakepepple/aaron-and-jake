@@ -1,6 +1,6 @@
 const express = require('express');
 require('dotenv').config();
-
+var socket = require('socket.io');
 const app = express();
 
 app.get('/', (req, res) => {
@@ -9,6 +9,17 @@ app.get('/', (req, res) => {
 
 const port = process.env.PORT;
 
-app.listen(port, () => {
+var server = app.listen(port, () => {
   console.log(`app listening on port ${port}`);
+});
+
+var io = socket(server);
+
+io.on('connection', function(socket){
+  console.log('Connection', socket.id)
+
+  socket.on('chat', function(data){
+    io.sockets.emit('chat', data);
+
+  });
 });
