@@ -15,7 +15,10 @@ const compiler = webpack(webpackConfig);
 // database requirements
 const passwordHash = require('password-hash');
 const db = require('./db-config');
-const { User, Event } = { db };
+
+const User = db.User;
+const Event = db.Event;
+const Message = db.Message;
 // passport requirements
 const passport = require('passport');
 const JsonStrategy = require('passport-json').Strategy;
@@ -23,7 +26,8 @@ const JsonStrategy = require('passport-json').Strategy;
 const googleMapsClient = require('@google/maps').createClient({
   key: process.env.GOOGLE_MAPS_API_KEY,
 });
-
+// socket requirement
+const socket = require('socket.io');
 
 const app = express();
 
@@ -39,6 +43,7 @@ const vueOptions = {
 const expressVueMiddleWare = expressVue.init(vueOptions);
 app.use(expressVueMiddleWare);
 app.use(express.static(path.join(__dirname, '/dist/')));
+app.use(express.static(__dirname));
 
 // cross domain access
 const allowCrossDomain = (req, res, next) => {
@@ -103,12 +108,9 @@ app.get('/', (req, res) => {
 
 app.get('/browse', (req, res) => {
   // IN PROGRESS
-  // console.log('connected');
-  // const data = {
-  //   otherData: 'something from the server'
-  // };
-  // res.send(data);
-  // next();
+  Event.findAll().then((events) => {
+    res.status(200).send(events);
+  });
 });
 
 app.post('/login', passport.authenticate('json', { failureRedirect: '/login' }), (req, res) => {
@@ -158,48 +160,83 @@ app.post('/signup', (req, res) => {
     });
 });
 
-app.post('/create', ({ body }, res) => {
-  const { location, name, recipeID, time } = { body };
+app.post('/create', (req, res) => {
+  const location = req.body.location;
+  const name = req.body.name;
+  const meal = req.body.meal;
+  const time = req.body.time;
   // Calculate Latitude and Longitude from this address
+  let latitude;
+  let longitude;
   googleMapsClient.geocode({
     address: location,
   }, (err, response) => {
     if (err) {
       console.log(err);
     } else {
-      console.log(response);
+      console.log(response.json.results);
+      latitude = response.json.results.geometry.location.lat();
+      longitude = response.json.results.geometry.location.lng();
     }
-  });
-  // Make sure to put this in a 'then' function:
-  const latitude = location;
-  const longitude = location;
-  Event.findOrCreate({
-    where: { Name: name },
-    defaults: {
-      RecipeID: recipeID,
-      LocationLat: latitude,
-      LocationLng: longitude,
-      Time: time,
-      Host: session.user,
-    },
   })
-    .spread((event, created) => {
-      if (created) {
-        res.status(201).send('Event successfully created');
-      } else {
-        res.status(200).send('Event already exists! Pick another name.');
-      }
+    .then(() => {
+      Event.findOrCreate({
+        where: { Name: name },
+        defaults: {
+          RecipeID: meal,
+          LocationLat: latitude,
+          LocationLng: longitude,
+          // Come back to format this Date
+          Time: Date.now(),
+          Host: session.user || 'Jake',
+        },
+      })
+        .spread((event, created) => {
+          if (created) {
+            res.status(201).send('Event successfully created');
+          } else {
+            res.status(200).send('Event already exists! Pick another name.');
+          }
+        });
     });
 });
 
 
 const port = process.env.PORT;
 
-var server = app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`app listening on port ${port}`);
+});
+
+// Set up socket
+const io = socket(server);
+
+io.on('connection', (currentSocket) => {
+  console.log('made socket connection', currentSocket.id);
+  let isInitialConnection = false;
+
+  if (!isInitialConnection) {
+    Message.findAll().then((messages) => {
+      messages.forEach((message) => {
+        io.currentSocket.emit('chat', message);
+      });
+      isInitialConnection = true;
+    });
+  }
+
+  socket.on('chat', (data) => {
+    Message.create({ Handle: data.handle, Message: data.message, Event: data.event })
+      .then(() => {
+        io.sockets.emit('chat', data);
+      }).catch((err) => {
+        console.log(err);
+      });
+  });
 });
 
 // TEST SERVER
 // app.listen(80, 'localhost', function() {
 //   console.log('successfully hosting on 3001');
 // })
+
+module.exports.server = server;
