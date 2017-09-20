@@ -8,21 +8,12 @@
         </form>
         <router-link to="/signup">Create New Account</router-link>
 
-
-
-
-        
     </div>
 </template>
 
 <script>
 // Imports
-import App from '../App.vue';
-//import Routes from '../routes'
 
-// const router = new VueRouter({
-//   routes: Routes
-// });
 export default {
     data() {
         return {
@@ -42,15 +33,14 @@ export default {
                 email: this.loginData.email,
                 password: this.loginData.password
             }).then(function(data, status, response) {
-               // this.$route.router.go('/')
                 console.log(response)
                 console.log(data)
                 this.loginData.email = 'rmatheney7@gmail.com'
                 this.loginData.password = '123'
             })
         },
-        test: function (){
-             router.go('/')
+        test: function() {
+            router.go('/')
 
         }
     }
