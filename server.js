@@ -211,20 +211,23 @@ const server = app.listen(port, () => {
 // Set up socket
 const io = socket(server);
 
-io.on('connection', (currentSocket) => {
-  console.log('made socket connection', currentSocket.id);
-  let isInitialConnection = false;
-
-  if (!isInitialConnection) {
-    Message.findAll().then((messages) => {
-      messages.forEach((message) => {
-        io.currentSocket.emit('chat', message);
-      });
-      isInitialConnection = true;
-    });
-  }
+io.on('connection', (socket) => {
+  console.log('made socket connection', socket.id);
+  
 
   socket.on('chat', (data) => {
+    // IN PROGRESS - Fetch past messages from db
+    // let isInitialConnection = false;
+
+    // if (!isInitialConnection) {
+    //   Message.findAll().then((messages) => {
+    //     messages.forEach((message) => {
+    //       socket.emit('chat', message);
+    //     });
+    //     isInitialConnection = true;
+    //   });
+    // }
+
     Message.create({ Handle: data.handle, Message: data.message, Event: data.event })
       .then(() => {
         io.sockets.emit('chat', data);
