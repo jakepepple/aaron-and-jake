@@ -9,6 +9,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "@google/maps": "^0.4.3",
     "body-parser": "^1.18.1",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.4",
