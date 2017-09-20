@@ -63,6 +63,31 @@ const Event = sequelize.define('event', {
   },
 });
 
+const Message = sequelize.define('message', {
+  Handle: {
+    type: Sequelize.STRING,
+  },
+  Message: {
+    type: Sequelize.STRING,
+  },
+  Event: {
+    type: Sequelize.STRING,
+  },
+});
+
+// TEST DB-MESSAGE CREATION & QUERY
+Message.sync().then(() => {
+  Message.findOrCreate({
+    where: { Handle: 'randomUser' },
+    defaults: {
+      Message: 'I am a test message',
+      Event: 'jam sesh',
+    },
+  }).spread((message, created) => {
+    console.log(message.get({ plain: true }));
+    console.log(created);
+  });
+});
 // TEST DB-EVENT CREATION & QUERY
 // Event.sync().then(() => {
 //   Event.findOrCreate({
@@ -74,8 +99,8 @@ const Event = sequelize.define('event', {
 //       Time: Date.now(),
 //       Host: 'Jake Pepple',
 //     },
-//   }).spread((user, created) => {
-//     console.log(user.get({ plain: true }));
+//   }).spread((event, created) => {
+//     console.log(event.get({ plain: true }));
 //     console.log(created);
 //   });
 // });
@@ -103,3 +128,4 @@ const Event = sequelize.define('event', {
 
 module.exports.User = User;
 module.exports.Event = Event;
+module.exports.Message = Message;
