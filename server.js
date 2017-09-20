@@ -166,7 +166,7 @@ app.post('/create', (req, res, next) => {
 
 const port = process.env.PORT;
 
-app.listen(port, () => {
+var server = app.listen(port, () => {
   console.log(`app listening on port ${port}`);
 });
 
