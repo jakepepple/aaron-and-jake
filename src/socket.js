@@ -1,4 +1,5 @@
-const socket = io.connect('http://61e83bf3.ngrok.io:' + process.env.PORT );
+// var io = require('socket.io')
+const socket = io.connect('http://61e83bf3.ngrok.io');
 
 
 let message = document.getElementById('message'),
