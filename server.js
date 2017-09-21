@@ -194,7 +194,11 @@ app.post('/create', (req, res) => {
         LocationLng: longitude,
         // Come back to format this Date
         Time: Date.now(),
+<<<<<<< HEAD
         Host: session.user || 'Aaron',
+=======
+        Host: session.user || 'Jake',
+>>>>>>> refactor server to allow event creation
       }).then(() => {
         console.log('event happened');
         res.status(201).send('Event successfully created');
