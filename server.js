@@ -213,18 +213,18 @@ const io = socket(server);
 
 io.on('connection', (currentSocket) => {
   console.log('made socket connection', currentSocket.id);
-  let isInitialConnection = false;
+  // let isInitialConnection = false;
 
-  if (!isInitialConnection) {
-    Message.findAll().then((messages) => {
-      messages.forEach((message) => {
-        io.currentSocket.emit('chat', message);
-      });
-      isInitialConnection = true;
-    });
-  }
+  // if (!isInitialConnection) {
+  //   Message.findAll().then((messages) => {
+  //     messages.forEach((message) => {
+  //       io.currentSocket.emit('chat', message);
+  //     });
+  //     isInitialConnection = true;
+  //   });
+  // }
 
-  socket.on('chat', (data) => {
+  currentSocket.on('chat', (data) => {
     Message.create({ Handle: data.handle, Message: data.message, Event: data.event })
       .then(() => {
         io.sockets.emit('chat', data);
@@ -232,9 +232,9 @@ io.on('connection', (currentSocket) => {
         console.log(err);
       });
   });
-  socket.on('typing', (data) => {
-    socket.brodcast.emit('typing', data);
-  })
+  currentSocket.on('typing', (data) => {
+    currentSocket.broadcast.emit('typing', data);
+  });
 });
 
 // TEST SERVER
