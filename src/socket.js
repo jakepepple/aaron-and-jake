@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 // var io = require('socket.io')
+=======
+>>>>>>> Build out routes, refactor using es6
 const socket = io.connect('http://61e83bf3.ngrok.io');
 
 

@@ -16,9 +16,7 @@ const compiler = webpack(webpackConfig);
 const passwordHash = require('password-hash');
 const db = require('./db-config');
 
-const User = db.User;
-const Event = db.Event;
-const Message = db.Message;
+const { User, Event, Message } = db;
 // passport requirements
 const passport = require('passport');
 const JsonStrategy = require('passport-json').Strategy;
@@ -50,10 +48,22 @@ const allowCrossDomain = (req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'POST, GET');
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Credentials', true);
   next();
 };
 app.use(allowCrossDomain);
 
+// passport session setup
+passport.serializeUser((user, done) => {
+  console.log('serializing', user.dataValues.id || 'no user to serialize');
+  done(null, user.dataValues.id);
+});
+passport.deserializeUser((id, done) => {
+  console.log('deserializing', id || 'no id to deserialize');
+  User.findById(id, err).then((err, user) => {
+    done(err, user);
+  });
+});
 
 // passport strategy set-up
 passport.use(new JsonStrategy({
@@ -72,17 +82,8 @@ passport.use(new JsonStrategy({
       console.log('wrong password');
       return done(null, false, { message: 'Incorrect password!' });
     }
-    console.log('about to serialize');
-    passport.serializeUser((user, done) => done(null, user.id));
-    passport.deserializeUser((id, done) => {
-      User.findById(id).then((user) => {
-        if (user) {
-          done(null, user.get());
-        } else {
-          done(user.errors, null);
-        }
-      });
-    });
+
+    console.log('passed authentication');
     return done(null, user);
   })
     .catch((err) => {
@@ -91,12 +92,12 @@ passport.use(new JsonStrategy({
     });
 }));
 
-// passport middleware
-app.use(session({ secret: 'dinnertime' }));
+// parsers, passport session init
+app.use(cookieParser('dinnertime'));
 app.use(bodyParser.json({ extended: false }));
+app.use(session({ secret: 'dinnertime', cookie: { maxAge: 240000 } }));
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 // Routes:
 
@@ -109,33 +110,41 @@ app.get('/', (req, res) => {
 app.get('/browse', (req, res) => {
   // IN PROGRESS
   Event.findAll().then((events) => {
+    console.log(events);
     res.status(200).send(events);
   });
 });
 
 app.post('/login', passport.authenticate('json', { failureRedirect: '/login' }), (req, res) => {
   // IN PROGRESS
-
+  // console.log('cookies', req.cookies);
+  console.log('session at login', req.session);
+  // console.log('login:', req.user || 'no user');
   console.log('logging in success');
-  res.status(201).send(`Successfully logged in as: ${req.body.email}`);
-  // passport.authenticate('json', {
-  //   successRedirect: '/profile',
-  //   failureRedirect: '/login',
-  //   failureFlash: 'Incorrect email or password'
-  // })
+  req.login(req.user, (err) => {
+    if (err) {
+      console.log('error logging in:', err);
+    }
+  });
+  res.redirect('/profile');
 });
 
 app.get('/profile', (req, res) => {
-  if (session.user) {
-    res.status(200).send('Logged in: Profile access granted');
-  } else {
-    res.redirect('/login');
+  console.log(req.session.passport);
+  console.log('session at profile', req.session);
+  console.log(req.user || 'no user');
+  console.log(req.cookies || 'no cookies');
+  if (!req.user) {
+    res.status(401).send('Not logged in!');
+  } else if (req.user) {
+    User.findById(req.user.id).then((user) => {
+      console.log(user);
+      res.status(200).send(user);
+    });
   }
 });
 
 app.post('/signup', (req, res) => {
-  console.log(req);
-  console.log(req.body);
   const hash = passwordHash.generate(req.body.password);
   // TEST password-hash
 
@@ -161,10 +170,9 @@ app.post('/signup', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
-  const location = req.body.location;
-  const name = req.body.name;
-  const meal = req.body.meal;
-  const time = req.body.time;
+  const {
+    location, name, meal,
+  } = req.body;
   // Calculate Latitude and Longitude from this address
   let latitude;
   let longitude;
@@ -175,30 +183,31 @@ app.post('/create', (req, res) => {
       console.log(err);
     } else {
       console.log(response.json.results);
-      latitude = response.json.results.geometry.location.lat();
-      longitude = response.json.results.geometry.location.lng();
+      console.log(response.json.results[0].geometry);
+      latitude = response.json.results[0].geometry.location.lat;
+      longitude = response.json.results[0].geometry.location.lng;
+      console.log(name, meal, latitude, longitude);
+      Event.create({
+        Name: name,
+        RecipeID: meal,
+        LocationLat: latitude,
+        LocationLng: longitude,
+        // Come back to format this Date
+        Time: Date.now(),
+<<<<<<< HEAD
+        Host: session.user || 'Aaron',
+=======
+        Host: session.user || 'Jake',
+>>>>>>> refactor server to allow event creation
+      }).then(() => {
+        console.log('event happened');
+        res.status(201).send('Event successfully created');
+      }, (error) => {
+        console.log('error creating event:', error);
+        res.status(500).send('Error creating event');
+      });
     }
-  })
-    .then(() => {
-      Event.findOrCreate({
-        where: { Name: name },
-        defaults: {
-          RecipeID: meal,
-          LocationLat: latitude,
-          LocationLng: longitude,
-          // Come back to format this Date
-          Time: Date.now(),
-          Host: session.user || 'Jake',
-        },
-      })
-        .spread((event, created) => {
-          if (created) {
-            res.status(201).send('Event successfully created');
-          } else {
-            res.status(200).send('Event already exists! Pick another name.');
-          }
-        });
-    });
+  });
 });
 
 
@@ -212,7 +221,7 @@ const server = app.listen(port, () => {
 const io = socket(server);
 
 io.on('connection', (currentSocket) => {
-  console.log('made socket connection', currentSocket.id);
+  console.log('made currentSocket connection', currentSocket.id);
   // let isInitialConnection = false;
 
   // if (!isInitialConnection) {
