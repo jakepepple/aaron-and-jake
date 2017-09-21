@@ -9,6 +9,7 @@
         <button id="send">Send</button>
     </div>
 </template>
+<script src="../socket.js"></script>
 
 <script>
 // Imports
@@ -22,6 +23,11 @@ export default {
        
     }
 }
+
+
+
+
+
 </script>
 
 <style scoped>

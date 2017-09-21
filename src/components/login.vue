@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="login">
         <p>Login Page</p>
         <form>
             <input type="text" v-model="loginData.email" placeholder="Email" required/>
@@ -46,7 +46,21 @@ export default {
 </script>
 
 <style scoped>
-.body {
+#login {
+    
+    background-color:#ccc;
+
+    background-color:#ccc;
+
+    position: absolute;;
+    top:100px;
+    left:0px;
+    
+    width:100%;
+    height:100%;
+    top:150px;
+    left:0px;
+    z-index:1000;
     background: url(../assets/food-salad-restaurant-person.jpg);
     background-repeat: no-repeat;
     background-size: cover;
