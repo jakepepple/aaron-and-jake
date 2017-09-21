@@ -29,20 +29,17 @@ export default {
     },
     methods: {
         login: function() {
-            this.$http.post('/login', {
+            this.$http.post('http://61e83bf3.ngrok.io/login', {
                 email: this.loginData.email,
                 password: this.loginData.password
             }).then(function(data, status, response) {
                 console.log(response)
                 console.log(data)
-                this.loginData.email = 'rmatheney7@gmail.com'
-                this.loginData.password = '123'
+                this.loginData.email = ''
+                this.loginData.password = ''
             })
         },
-        test: function() {
-            router.go('/')
-
-        }
+    
     }
 
 }

@@ -232,6 +232,9 @@ io.on('connection', (currentSocket) => {
         console.log(err);
       });
   });
+  socket.on('typing', (data) => {
+    socket.brodcast.emit('typing', data);
+  })
 });
 
 // TEST SERVER

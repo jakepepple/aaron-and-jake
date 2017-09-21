@@ -8,13 +8,14 @@ import browse from './components/browse.vue';
 import chat from './components/chatBox.vue';
 
 export default [
-    { path: '/home', component: home},
-    { path: '/profile', component: profile},
-    { path: '/login', component: login},
-    { path: '/event', component: event},
-    { path: '/create', component: create},
-    { path: '/signup', component: signup},
-    { path: '/browse', component: browse},
-    { path: '/chatBox', component: chat },
+  { path: '/home', component: home },
+  { path: '/profile', component: profile },
+  { path: '/login', component: login },
+  { path: '/event', component: event },
+  { path: '/create', component: create },
+  { path: '/signup', component: signup },
+  { path: '/browse', component: browse },
+  { path: '/chatBox', component: chat },
 
-]
+];
+
