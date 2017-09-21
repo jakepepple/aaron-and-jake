@@ -34,9 +34,7 @@ export default {
                 response.body.forEach(function(element) {
                     let tempLat = element.LocationLat;
                     let tempLong = element.LocationLng;
-                    console.log(element, tempLat, tempLong)
                     arr.push({ latitude: tempLat, longitude: tempLong })
-                    console.log({ latitude: tempLat, longitude: tempLong })
                 });
                 arr.forEach((coord) => {
                     const position = new google.maps.LatLng(coord.latitude, coord.longitude);
