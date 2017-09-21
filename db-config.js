@@ -76,18 +76,19 @@ const Message = sequelize.define('message', {
 });
 
 // TEST DB-MESSAGE CREATION & QUERY
-Message.sync().then(() => {
-  Message.findOrCreate({
-    where: { Handle: 'randomUser' },
-    defaults: {
-      Message: 'I am a test message',
-      Event: 'jam sesh',
-    },
-  }).spread((message, created) => {
-    console.log(message.get({ plain: true }));
-    console.log(created);
-  });
-});
+// Message.sync().then(() => {
+//   Message.findOrCreate({
+//     where: { Handle: 'randomUser' },
+//     defaults: {
+//       Message: 'I am a test message',
+//       Event: 'jam sesh',
+//     },
+//   }).spread((message, created) => {
+//     console.log(message.get({ plain: true }));
+//     console.log(created);
+//   });
+// });
+
 // TEST DB-EVENT CREATION & QUERY
 // Event.sync().then(() => {
 //   Event.findOrCreate({
