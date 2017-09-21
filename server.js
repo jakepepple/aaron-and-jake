@@ -92,17 +92,10 @@ passport.use(new JsonStrategy({
     });
 }));
 
-<<<<<<< HEAD
 // parsers, passport session init
 app.use(cookieParser('dinnertime'));
 app.use(bodyParser.json({ extended: false }));
 app.use(session({ secret: 'dinnertime', cookie: { maxAge: 240000 } }));
-=======
-// passport middleware, parsers
-app.use(session({ secret: 'dinnertime' }));
-app.use(bodyParser.json({ extended: false }));
-app.use(cookieParser('hungry people'));
->>>>>>> Build out routes, refactor using es6
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -124,7 +117,6 @@ app.get('/browse', (req, res) => {
 
 app.post('/login', passport.authenticate('json', { failureRedirect: '/login' }), (req, res) => {
   // IN PROGRESS
-<<<<<<< HEAD
   // console.log('cookies', req.cookies);
   console.log('session at login', req.session);
   // console.log('login:', req.user || 'no user');
@@ -147,19 +139,6 @@ app.get('/profile', (req, res) => {
   } else if (req.user) {
     User.findById(req.user.id).then((user) => {
       console.log(user);
-=======
-  console.log('cookies', req.cookies);
-  console.log('session', req.session);
-  console.log('logging in success');
-  res.status(201).send(`Successfully logged in as: ${req.body.email}`);
-});
-
-app.get('/profile', (req, res) => {
-  if (!req.session.passport) {
-    res.status(401).send('Not logged in!');
-  } else if (req.session.passport.user) {
-    User.findById(req.session.passport.user).then((user) => {
->>>>>>> Build out routes, refactor using es6
       res.status(200).send(user);
     });
   }
@@ -190,17 +169,10 @@ app.post('/signup', (req, res) => {
     });
 });
 
-<<<<<<< HEAD
 app.post('/create', (req, res) => {
   const {
     location, name, meal,
   } = req.body;
-=======
-app.post('/create', ({ body }, res) => {
-  const {
-    location, name, meal, time,
-  } = body;
->>>>>>> Build out routes, refactor using es6
   // Calculate Latitude and Longitude from this address
   let latitude;
   let longitude;
@@ -244,19 +216,9 @@ const server = app.listen(port, () => {
 // Set up socket
 const io = socket(server);
 
-<<<<<<< HEAD
 io.on('connection', (currentSocket) => {
   console.log('made currentSocket connection', currentSocket.id);
   // let isInitialConnection = false;
-=======
-io.on('connection', (socket) => {
-  console.log('made socket connection', socket.id);
-
-
-  socket.on('chat', (data) => {
-    // IN PROGRESS - Fetch past messages from db
-    // let isInitialConnection = false;
->>>>>>> Build out routes, refactor using es6
 
   // if (!isInitialConnection) {
   //   Message.findAll().then((messages) => {
