@@ -30,6 +30,8 @@ export default {
 .topnav {
     background-color: #333;
     overflow: hidden;
+   padding-top: 70px; 
+    
 }
 
 /* Style the links inside the navigation bar */
