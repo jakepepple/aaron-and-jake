@@ -18,21 +18,24 @@
         </form>
 
         <recipes v-if="populateList" v-bind:meals="meals" v-bind:populateList="populateList" v-on:hideList="hideList($event)"></recipes>
+      
     </div>
 </template>
-<label>Create Event</label><br/>
 <script>
 // Imports
 import recipes from './recipes.vue';
+import chat from './chatBox.vue';
 export default {
     components: {
-        'recipes': recipes
+        'recipes': recipes,
+        chat: chat,
     },
     data() {
         return {
             food: '',
             populateList: false,
             meals: [],
+            showModal: false,
             eventData: {
                 name: '',
                 time: '',
