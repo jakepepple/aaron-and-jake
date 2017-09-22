@@ -1,13 +1,13 @@
 <template>
     <div id='recipes'>
         <ul>
-            <li v-for="meal in meals" v-bind:data="meal.recipe.uri">
+            <li v-for="meal in meals" v-bind:key="meal.id" v-bind:data="meal.recipe.uri">
                 <a v-bind:href="meal.recipe.shareAs" target="_blank">
                     <img v-bind:src="meal.recipe.image">
                 </a><br/> 
                 {{meal.recipe.label}}<br/>
                 <ul>
-                    <li v-for="Ingredient in meal.recipe.ingredientLines">
+                    <li v-for="Ingredient in meal.recipe.ingredientLines" v-bind:key="Ingredient.id">
                         {{Ingredient}}
                     </li>
                 </ul>
