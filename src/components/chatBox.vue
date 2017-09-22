@@ -52,7 +52,7 @@ export default {
         }
     },
     mounted() {
-        const socket = io.connect('http://61e83bf3.ngrok.io');
+        const socket = io.connect('http://localhost:8080');
 
 
         let message = document.getElementById('message');
