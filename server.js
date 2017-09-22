@@ -6,6 +6,7 @@ const expressVue = require('express-vue');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const store = require('store');
 // webpack requirements
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
@@ -20,6 +21,7 @@ const { User, Event, Message } = db;
 // passport requirements
 const passport = require('passport');
 const JsonStrategy = require('passport-json').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 // google maps requirement
 const googleMapsClient = require('@google/maps').createClient({
   key: process.env.GOOGLE_MAPS_API_KEY,
@@ -56,17 +58,22 @@ app.use(allowCrossDomain);
 // passport session setup
 passport.serializeUser((user, done) => {
   console.log('serializing', user.dataValues.id || 'no user to serialize');
-  done(null, user.dataValues.id);
+  // store.set(user.dataValues.id, { email: user.dataValues.email });
+  done(null, user.id);
 });
 passport.deserializeUser((id, done) => {
   console.log('deserializing', id || 'no id to deserialize');
-  User.findById(id, err).then((err, user) => {
-    done(err, user);
+  User.findOne({ where: { id } }).then((user) => {
+    console.log(user);
+    done(null, user);
+  }, (err) => {
+    console.log(err);
+    done(err);
   });
 });
 
 // passport strategy set-up
-passport.use(new JsonStrategy({
+passport.use('json', new JsonStrategy({
   usernameProp: 'email',
   passwordProp: 'password',
   passReqToCallback: true,
@@ -92,10 +99,28 @@ passport.use(new JsonStrategy({
     });
 }));
 
+passport.use('local', new LocalStrategy({
+  usernameField: 'email',
+}, (username, password, done) => {
+  console.log('local authenticate', username);
+  User.findOne({ email: username }, (err, user) => {
+    if (err) {
+      return done(err);
+    }
+    if (!user) {
+      return done(null, false);
+    }
+    if (!passwordHash.verify(password, user.dataValues.Password)) {
+      return done(null, false);
+    }
+    return done(null, user);
+  });
+}));
+
 // parsers, passport session init
 app.use(cookieParser('dinnertime'));
 app.use(bodyParser.json({ extended: false }));
-app.use(session({ secret: 'dinnertime', cookie: { maxAge: 240000 } }));
+app.use(session({ secret: 'dinnertime', resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -115,32 +140,35 @@ app.get('/browse', (req, res) => {
   });
 });
 
-app.post('/login', passport.authenticate('json', { failureRedirect: '/login' }), (req, res) => {
+app.post('/login', passport.authenticate('json', { failureRedirect: '/#/login' }), (req, res) => {
   // IN PROGRESS
-  // console.log('cookies', req.cookies);
-  console.log('session at login', req.session);
-  // console.log('login:', req.user || 'no user');
-  console.log('logging in success');
-  req.login(req.user, (err) => {
-    if (err) {
-      console.log('error logging in:', err);
-    }
-  });
-  res.redirect('/profile');
+
+  store.set(req.sessionID, { userID: req.user.dataValues.id });
+
+  res.cookie('user', req.user.dataValues.id);
+
+  res.status(201).send('successfully logged in');
 });
 
 app.get('/profile', (req, res) => {
-  console.log(req.session.passport);
-  console.log('session at profile', req.session);
-  console.log(req.user || 'no user');
-  console.log(req.cookies || 'no cookies');
-  if (!req.user) {
-    res.status(401).send('Not logged in!');
-  } else if (req.user) {
-    User.findById(req.user.id).then((user) => {
-      console.log(user);
-      res.status(200).send(user);
-    });
+  passport.authenticate('local');
+
+  if (req.user) {
+    User.findOne({ where: { id: req.user.dataValues.id } })
+      .then((user) => {
+        const dataToSend = {
+          id: user.id,
+          Name: user.Name,
+          hostRating: user.Host_Rating,
+          contributorRating: user.Contributor_Rating,
+          Email: user.Email,
+          City: user.City,
+          memberSince: user.createdAt,
+        };
+        res.status(200).send(dataToSend);
+      });
+  } else {
+    res.status(401).send('Go log in first!');
   }
 });
 
@@ -170,44 +198,80 @@ app.post('/signup', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
+  passport.authenticate('local');
+  console.log(req.session, req.cookies.user);
+  if (!req.cookies.user) {
+    res.status(401).send('Need to log in first!');
+  }
+  let host;
   const {
     location, name, meal,
   } = req.body;
-  // Calculate Latitude and Longitude from this address
-  let latitude;
-  let longitude;
-  googleMapsClient.geocode({
-    address: location,
-  }, (err, response) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(response.json.results);
-      console.log(response.json.results[0].geometry);
-      latitude = response.json.results[0].geometry.location.lat;
-      longitude = response.json.results[0].geometry.location.lng;
-      console.log(name, meal, latitude, longitude);
-      Event.create({
-        Name: name,
-        RecipeID: meal,
-        LocationLat: latitude,
-        LocationLng: longitude,
-        // Come back to format this Date
-        Time: Date.now(),
-<<<<<<< HEAD
-        Host: session.user || 'Aaron',
-=======
-        Host: session.user || 'Jake',
->>>>>>> refactor server to allow event creation
-      }).then(() => {
-        console.log('event happened');
-        res.status(201).send('Event successfully created');
-      }, (error) => {
-        console.log('error creating event:', error);
-        res.status(500).send('Error creating event');
-      });
-    }
+  User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
+    host = user.Name;
+    console.log(host);
+    // Calculate Latitude and Longitude from this address
+    let latitude;
+    let longitude;
+    googleMapsClient.geocode({
+      address: location,
+    }, (err, response) => {
+      console.log('mapped');
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(response.json.results[0].geometry.location);
+        latitude = response.json.results[0].geometry.location.lat;
+        longitude = response.json.results[0].geometry.location.lng;
+        console.log(name, meal, latitude, longitude, host);
+        Event.create({
+          Name: name,
+          RecipeID: meal,
+          LocationLat: latitude,
+          LocationLng: longitude,
+          // Come back to format this Date
+          Time: Date.now(),
+          Host: host,
+        }).then(() => {
+          res.status(201).send('Event successfully created');
+        }, (error) => {
+          console.log('error creating event:', error);
+          res.status(500).send('Error creating event');
+        });
+      }
+    });
+  }, (userErr) => {
+    console.log(userErr);
+    res.status(500).send(userErr);
   });
+});
+
+app.get('/events', (req, res) => {
+  console.log('giving events');
+  Event.findAll().then((events) => {
+    console.log(events);
+    res.status(200).send(events);
+  });
+});
+
+app.get('/userevents', (req, res) => {
+  console.log('/userevents', req.cookies.user);
+  if (req.cookies.user) {
+    let hostName;
+    User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
+      console.log('user:', user);
+      hostName = user.Name;
+      Event.findAll({ where: { host: hostName } }).then((events) => {
+        console.log('events:', events);
+        res.status(200).send(events);
+      }, (err) => {
+        console.log('error find userevents:', err);
+        res.status(500).send(err);
+      });
+    });
+  } else {
+    res.send(401).send('log in first');
+  }
 });
 
 

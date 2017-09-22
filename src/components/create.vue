@@ -43,11 +43,13 @@ export default {
     },
     methods: {
         create: function() {
-            this.$http.post('http://61e83bf3.ngrok.io/create', {
+            this.$http.post('/create', {
                 name: this.eventData.name,
                 time: this.eventData.time,
                 location: this.eventData.location,
                 meal: this.eventData.meal
+            }, {
+                withCredentials: true,
             }).then(function(response) {
                 this.array = response.body
                 this.list = true

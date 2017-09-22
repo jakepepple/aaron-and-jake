@@ -29,9 +29,11 @@ export default {
     },
     methods: {
         login: function() {
-            this.$http.post('http://61e83bf3.ngrok.io/login', {
+            this.$http.post('/login', {
                 email: this.loginData.email,
                 password: this.loginData.password
+            }, {
+                withCredentials: true,
             }).then(function(data, status, response) {
                 console.log(response)
                 console.log(data)
