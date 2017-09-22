@@ -18,20 +18,9 @@
         </form>
 
         <recipes v-if="populateList" v-bind:meals="meals" v-bind:populateList="populateList" v-on:hideList="hideList($event)"></recipes>
-       <div id="app">
-  <button id="show-modal" @click="showModal = true">Show Modal</button>
-  <!-- use the modal component, pass in the prop -->
-  <chat v-if="showModal" @close="showModal = false">
-    <!--
-      you can use custom content here to overwrite
-      default content
-    -->
-    <h3 slot="header">custom header</h3>
-  </chat>
-</div>
+      
     </div>
 </template>
-<label>Create Event</label><br/>
 <script>
 // Imports
 import recipes from './recipes.vue';
