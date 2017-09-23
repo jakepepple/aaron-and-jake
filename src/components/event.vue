@@ -3,7 +3,7 @@
         <div id="app">
             <button id="show-modal" @click="showModal = true">Show Modal</button>
             <chat v-if="showModal" v-bind:event='event' @close="showModal = false">
-              
+
                 <h3 slot="header">{{event.Name}}</h3>
             </chat>
         </div>
@@ -28,9 +28,11 @@
 <script>
 // Imports
 import chat from './chatBox.vue';
+import mapMarkerData from './marker.vue';
 export default {
     components: {
         chat: chat,
+        mapMarkerData: mapMarkerData,
     },
     name: 'google-map',
     props: ['event'],
@@ -59,7 +61,7 @@ export default {
         const mapCentre = this.markerCoordinates[0]
         const options = {
             center: new google.maps.LatLng(mapCentre.latitude, mapCentre.longitude),
-            maxZoom: 12,
+            maxZoom: 16,
         }
         this.map = new google.maps.Map(element, options);
 
@@ -68,9 +70,28 @@ export default {
 
         this.markerCoordinates.forEach((coord) => {
             const position = new google.maps.LatLng(coord.latitude, coord.longitude);
-            const marker = new google.maps.Marker({
+
+             var contentString = 
+                    '<div>' +
+                    '<h2>' + `${coord.event.Name}` + '</h2>' +
+                    '<p>' + 'Host: ' + `${coord.event.Host}` + '</p>' +
+                    '<p>' + 'Address: ' + `${coord.event.Address}` + '</p>' +
+                    '</div>'
+            
+            
+            
+            var infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+
+
+            var marker = new google.maps.Marker({
                 position,
-                map: this.map
+                map: this.map,
+                title: this.event.name
+            });
+            marker.addListener('click', function() {
+                infowindow.open(this.map, marker);
             });
             this.markers.push(marker)
             this.map.fitBounds(this.bounds.extend(position))
@@ -79,18 +100,18 @@ export default {
 
     },
     created() {
-            this.$http.get('https://api.edamam.com/search?r=http://www.edamam.com/ontologies/edamam.owl%23' + this.event.RecipeID,
-                {
-                    headers: {
-                        app_id: 'e4a1bc0f',
-                        app_key: '19aa09f1b7b01b5afa733a72bdef0873',
-                    }
+        this.$http.get('https://api.edamam.com/search?r=http://www.edamam.com/ontologies/edamam.owl%23' + this.event.RecipeID,
+            {
+                headers: {
+                    app_id: 'e4a1bc0f',
+                    app_key: '19aa09f1b7b01b5afa733a72bdef0873',
                 }
-            ).then(function(response) {
-                this.meal = response.body[0]
-            });
-            
-        }
+            }
+        ).then(function(response) {
+            this.meal = response.body[0]
+        });
+
+    }
 }
 </script>
 
@@ -101,5 +122,4 @@ export default {
     margin: 0 auto;
     background: gray;
 }
-
 </style>

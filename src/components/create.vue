@@ -10,7 +10,9 @@
             <label>Event Time:</label>
             <input type="text" v-model="eventData.time" placeholder="Event Time"><br/>
             <label>Event Location:</label>
-            <input type="text" v-model="eventData.location" placeholder="Event Location"><br/>
+            <input type="text" v-model="eventData.address" placeholder="Event Address"><br/>
+            <input type="text" v-model="eventData.city" placeholder="Event City"><br/>
+            <input type="text" v-model="eventData.zip" placeholder="Event Zip"><br/>
             <label>Recipe lookup</label>
             <input type='text' v-model="food" placeholder="meal lookup">
             <button @click.prevent="lookUp">lookUp</button><br/>
@@ -39,19 +41,16 @@ export default {
             eventData: {
                 name: '',
                 time: '',
-                location: '',
+                address: '',
+                city: '',
+                zip: '',
                 meal: ''
             }
         }
     },
     methods: {
         create: function() {
-            this.$http.post('/create', {
-                name: this.eventData.name,
-                time: this.eventData.time,
-                location: this.eventData.location,
-                meal: this.eventData.meal
-            }, {
+            this.$http.post('/create', this.eventData, {
                 withCredentials: true,
             }).then(function(response) {
                 this.array = response.body
