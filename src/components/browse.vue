@@ -3,7 +3,11 @@
     </div>
 </template>
 <script>
+import mapMarkerData from './marker.vue';
 export default {
+    components: {
+        mapMarkerData: mapMarkerData,
+    },
     name: 'google-map',
     props: ['name'],
     data: function() {
@@ -31,16 +35,30 @@ export default {
         this.$http.get('/browse')
             .then(function(response) {
                 let arr = []
+                console.log(response.body)
                 response.body.forEach(function(element) {
                     let tempLat = element.LocationLat;
                     let tempLong = element.LocationLng;
-                    arr.push({ latitude: tempLat, longitude: tempLong })
+                    let eventInfo = element;
+                    arr.push({ latitude: tempLat, longitude: tempLong, event: eventInfo })
                 });
                 arr.forEach((coord) => {
                     const position = new google.maps.LatLng(coord.latitude, coord.longitude);
-                    const marker = new google.maps.Marker({
+                    var contentString = 
+                    '<div>' +
+                    '<h2>' + `${coord.event.Name}` + '</h2>' +
+                    '<p>' + 'Host: ' + `${coord.event.Host}` + '</p>' +
+                    '<p>' + 'Address: ' + `${coord.event.Address}` + '</p>' +
+                    '</div>'
+                    var infowindow = new google.maps.InfoWindow({
+                        content: contentString
+                    });
+                    var marker = new google.maps.Marker({
                         position,
-                        map: this.map
+                        map: this.map,
+                    });
+                    marker.addListener('click', function() {
+                        infowindow.open(this.map, marker);
                     });
                     this.markers.push(marker)
                     this.map.fitBounds(this.bounds.extend(position))
@@ -53,15 +71,6 @@ export default {
 
 
 
-        this.markerCoordinates.forEach((coord) => {
-            const position = new google.maps.LatLng(coord.latitude, coord.longitude);
-            const marker = new google.maps.Marker({
-                position,
-                map: this.map
-            });
-            this.markers.push(marker)
-            this.map.fitBounds(this.bounds.extend(position))
-        });
 
 
     }
