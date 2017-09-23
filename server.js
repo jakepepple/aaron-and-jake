@@ -135,7 +135,7 @@ app.get('/', (req, res) => {
 app.get('/browse', (req, res) => {
   // IN PROGRESS
   Event.findAll().then((events) => {
-    console.log(events);
+    // console.log(events);
     res.status(200).send(events);
   });
 });
@@ -199,7 +199,7 @@ app.post('/signup', (req, res) => {
 
 app.post('/create', (req, res) => {
   passport.authenticate('local');
-  console.log(req.session, req.cookies.user);
+  // console.log(req.session, req.cookies.user);
   if (!req.cookies.user) {
     res.status(401).send('Need to log in first!');
   }
@@ -220,15 +220,15 @@ app.post('/create', (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        console.log(response.json.results[0].geometry.location);
         latitude = response.json.results[0].geometry.location.lat;
         longitude = response.json.results[0].geometry.location.lng;
-        console.log(name, meal, latitude, longitude, host);
+        // console.log(name, meal, latitude, longitude, host);
         Event.create({
           Name: name,
           RecipeID: meal,
           LocationLat: latitude,
           LocationLng: longitude,
+          Address: location,
           // Come back to format this Date
           Time: Date.now(),
           Host: host,
@@ -247,22 +247,29 @@ app.post('/create', (req, res) => {
 });
 
 app.get('/events', (req, res) => {
-  console.log('giving events');
   Event.findAll().then((events) => {
-    console.log(events);
+    // console.log(events);
     res.status(200).send(events);
   });
 });
 
 app.get('/userevents', (req, res) => {
   console.log('/userevents', req.cookies.user);
-  if (req.cookies.user) {
+  if (req.user) {
     let hostName;
     User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
       console.log('user:', user);
       hostName = user.Name;
       Event.findAll({ where: { host: hostName } }).then((events) => {
-        console.log('events:', events);
+        // console.log('events:', events);
+        // const addresses = [];
+        // let i = 0;
+        // while (i < events.length - 1) {
+        //   googleMapsClient.reverseGeocode({ latlng: { lat: events[i].dataValues.LocationLat, lng: events[i].dataValues.LocationLng } }, (err, response) => {
+        //     console.log(response.json.results);
+        //     i++;
+        //   });
+        // }
         res.status(200).send(events);
       }, (err) => {
         console.log('error find userevents:', err);
@@ -270,7 +277,7 @@ app.get('/userevents', (req, res) => {
       });
     });
   } else {
-    res.send(401).send('log in first');
+    res.status(401).send('log in first');
   }
 });
 
