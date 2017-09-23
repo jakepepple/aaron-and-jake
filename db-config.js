@@ -50,10 +50,13 @@ const Event = sequelize.define('event', {
     type: Sequelize.STRING,
   },
   LocationLat: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.DECIMAL(18, 7),
   },
   LocationLng: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.DECIMAL(18, 7),
+  },
+  Address: {
+    type: Sequelize.STRING,
   },
   Time: {
     type: Sequelize.DATE,
@@ -90,21 +93,31 @@ const Message = sequelize.define('message', {
 // });
 
 // TEST DB-EVENT CREATION & QUERY
-// Event.sync().then(() => {
-//   Event.findOrCreate({
-//     where: { Name: 'test event' },
-//     defaults: {
-//       RecipeID: '7bf4a371c6884d809682a72808da7dc2',
-//       LocationLat: -25.363,
-//       LocationLng: 131.044,
-//       Time: Date.now(),
-//       Host: 'Jake Pepple',
-//     },
-//   }).spread((event, created) => {
-//     console.log(event.get({ plain: true }));
-//     console.log(created);
-//   });
+// Event.sync({force: true}).then(() => {
+// Event.findOrCreate({
+//   where: { Name: 'test event 1' },
+//   // defaults: {
+//   //   RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
+//   //   Address: '748 Camp St',
+//   //   LocationLat: 29.945947,
+//   //   LocationLng: -90.0700232,
+//   //   Time: Date.now(),
+//   //   Host: 'jp',
+//   // },
+//   defaults: {
+//     RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
+//     Address: '729 Louque Pl',
+//     LocationLat:
+//     29.9891516,
+//     LocationLng: -90.1087028,
+//     Time: Date.now(),
+//     Host: 'jp',
+//   },
+// }).spread((event, created) => {
+//   console.log(event.get({ plain: true }));
+//   console.log(created);
 // });
+// // });
 
 // TEST DB-USER CREATION & QUERY
 // User.sync().then(() => {

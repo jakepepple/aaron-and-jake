@@ -58,10 +58,15 @@ export default {
                 this.data.profileEmail = response.body.Email;
                 this.data.profileHR = response.body.hostRating;
                 this.data.profileCR = response.body.contributorRating;
+                
+            }, (err) => {
+                this.$router.push('/login');
             });
         this.$http.get('/userevents')
             .then(function(response) {
-                this.data.events = response.body;
+                    this.data.events = response.body;
+            }, (err) => {
+                this.$router.push('/login');
             })
     },
     methods: {
