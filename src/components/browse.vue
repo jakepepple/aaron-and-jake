@@ -28,7 +28,7 @@ export default {
         }
         this.map = new google.maps.Map(element, options);
 
-        this.$http.get('http://61e83bf3.ngrok.io/browse')
+        this.$http.get('/browse')
             .then(function(response) {
                 let arr = []
                 response.body.forEach(function(element) {

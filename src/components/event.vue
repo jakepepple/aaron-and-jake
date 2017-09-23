@@ -9,7 +9,10 @@
         </div>
         <p>Host: {{event.Host}}</p>
         <p>Party Name: {{event.Name}}</p>
-        <p>Reciepe: {{event.RecipeID}}</p>
+        <p>Recipe: {{meal.label}}</p>
+        <ul>
+            <li v-for="Ingredient in meal.ingredientLines" v-bind:key="Ingredient.id">{{Ingredient}}</li>
+        </ul>
         <p>Lat: {{event.LocationLat}}</p>
         <p>Lng: {{event.LocationLng}}</p>
         <p>Time: {{event.Time}}</p>
@@ -33,6 +36,7 @@ export default {
     props: ['event'],
     data() {
         return {
+            meal: '',
             mapName: this.name + "-map",
             markerCoordinates: [{
                 latitude: this.event.LocationLat,
@@ -55,7 +59,7 @@ export default {
         const mapCentre = this.markerCoordinates[0]
         const options = {
             center: new google.maps.LatLng(mapCentre.latitude, mapCentre.longitude),
-            zoom: -50,
+            maxZoom: 12,
         }
         this.map = new google.maps.Map(element, options);
 
@@ -73,8 +77,20 @@ export default {
         });
 
 
-    }
-
+    },
+    created() {
+            this.$http.get('https://api.edamam.com/search?r=http://www.edamam.com/ontologies/edamam.owl%23' + this.event.RecipeID,
+                {
+                    headers: {
+                        app_id: 'e4a1bc0f',
+                        app_key: '19aa09f1b7b01b5afa733a72bdef0873',
+                    }
+                }
+            ).then(function(response) {
+                this.meal = response.body[0]
+            });
+            
+        }
 }
 </script>
 
