@@ -29,7 +29,7 @@ export default {
     },
     methods: {
         mealSelected(id){
-            this.mealId = 'http://www.edamam.com/ontologies/edamam.owl%23' + id.split('#')[1]
+            this.mealId = id.split('#')[1]
             console.log(this.mealId)
             this.$emit('hideList', [false, this.mealId])
             
