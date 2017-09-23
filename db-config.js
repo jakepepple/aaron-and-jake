@@ -64,6 +64,15 @@ const Event = sequelize.define('event', {
   Host: {
     type: Sequelize.STRING,
   },
+  Contributor_List: {
+    type: Sequelize.STRING,
+  },
+  City: {
+    type: Sequelize.STRING,
+  },
+  Zip_Code: {
+    type: Sequelize.INTEGER,
+  },
 });
 
 const Message = sequelize.define('message', {
@@ -93,31 +102,34 @@ const Message = sequelize.define('message', {
 // });
 
 // TEST DB-EVENT CREATION & QUERY
-// Event.sync({force: true}).then(() => {
-// Event.findOrCreate({
-//   where: { Name: 'test event 1' },
-//   // defaults: {
-//   //   RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
-//   //   Address: '748 Camp St',
-//   //   LocationLat: 29.945947,
-//   //   LocationLng: -90.0700232,
-//   //   Time: Date.now(),
-//   //   Host: 'jp',
-//   // },
-//   defaults: {
-//     RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
-//     Address: '729 Louque Pl',
-//     LocationLat:
-//     29.9891516,
-//     LocationLng: -90.1087028,
-//     Time: Date.now(),
-//     Host: 'jp',
-//   },
-// }).spread((event, created) => {
-//   console.log(event.get({ plain: true }));
-//   console.log(created);
-// });
-// // });
+//Event.sync({ force: true }).then(() => {
+  // Event.findOrCreate({
+  //   where: { Name: 'test event 1' },
+  //   // defaults: {
+  //   //   RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
+  //   //   Address: '748 Camp St',
+  //   //   LocationLat: 29.945947,
+  //   //   LocationLng: -90.0700232,
+  //   //   Time: Date.now(),
+  //   //   Host: 'jp',
+  //   // },
+  //   defaults: {
+  //     RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
+  //     Address: '729 Louque Pl',
+  //     City: 'New Orleans',
+  //     Zip_Code: 70124,
+  //     Contributor_List: '2',
+  //     LocationLat:
+  //   29.9891516,
+  //     LocationLng: -90.1087028,
+  //     Time: Date.now(),
+  //     Host: 'jp',
+  //   },
+  // }).spread((event, created) => {
+  //   console.log(event.get({ plain: true }));
+  //   console.log(created);
+  // });
+//});
 
 // TEST DB-USER CREATION & QUERY
 // User.sync().then(() => {

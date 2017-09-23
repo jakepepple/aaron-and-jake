@@ -209,10 +209,8 @@ app.post('/create', (req, res) => {
   } = req.body;
   User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
     host = user.Name;
-    console.log(host);
-    // Calculate Latitude and Longitude from this address
-    let latitude;
-    let longitude;
+    console.log('host:', host);
+    // Calculate Latitude and Longitude, City, Zip from this address
     googleMapsClient.geocode({
       address: location,
     }, (err, response) => {
@@ -220,8 +218,13 @@ app.post('/create', (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        latitude = response.json.results[0].geometry.location.lat;
-        longitude = response.json.results[0].geometry.location.lng;
+        const resultObj = response.json.results[0];
+        const addressComponents = resultObj.address_components;
+        // console.log(addressComponents);
+        
+        const latitude = resultObj.geometry.location.lat;
+        const longitude = resultObj.geometry.location.lng;
+        
         // console.log(name, meal, latitude, longitude, host);
         Event.create({
           Name: name,
@@ -229,11 +232,18 @@ app.post('/create', (req, res) => {
           LocationLat: latitude,
           LocationLng: longitude,
           Address: location,
+          City: addressComponents[3].short_name,
+          Zip_Code: addressComponents[7].short_name,
           // Come back to format this Date
           Time: Date.now(),
           Host: host,
         }).then(() => {
-          res.status(201).send('Event successfully created');
+          Event.find({ where: { Name: name } }).then((event) => {
+            res.status(201).send(event);
+          }, (error) => {
+            console.log('error creating event:', error);
+            res.status(500).send('error creating event');
+          });
         }, (error) => {
           console.log('error creating event:', error);
           res.status(500).send('Error creating event');
