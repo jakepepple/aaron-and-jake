@@ -4,6 +4,9 @@
             <b-col>
                 <div cols='8' id="app">
                     <b-btn id="show-modal" @click="showModal = true">Event Chat</b-btn>
+                    
+    <button id="request" @click="makeRequest(event.Name)">Request to be Added to Party</button>
+
                     <chat v-if="showModal" v-bind:event='event' @close="showModal = false">
                         <h3 slot="header">{{event.Name}}</h3>
                     </chat>
@@ -112,11 +115,19 @@ export default {
                     app_id: 'e4a1bc0f',
                     app_key: '19aa09f1b7b01b5afa733a72bdef0873',
                 }
-            }
-        ).then(function(response) {
-            this.meal = response.body[0]
-        });
-
+            }).then(function(response) {
+                this.meal = response.body[0]
+            });
+            
+        },
+    methods: {
+        makeRequest: function(name) {
+            this.$http.post('/request', {
+                name: name,
+            }).then(function(response) {
+                console.log(response);
+            })
+        }
     }
 }
 </script>

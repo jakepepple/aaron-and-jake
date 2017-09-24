@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const passwordHash = require('password-hash');
 
 const sequelize = new Sequelize('dinner', 'buckeyedseminole', 'Opspark17', {
   host: 'whoscomingtodinner.database.windows.net',
@@ -38,6 +39,9 @@ const User = sequelize.define('user', {
     type: Sequelize.STRING,
   },
   Password: {
+    type: Sequelize.STRING,
+  },
+  Notifications: {
     type: Sequelize.STRING,
   },
 });
@@ -102,7 +106,7 @@ const Message = sequelize.define('message', {
 // });
 
 // TEST DB-EVENT CREATION & QUERY
-//Event.sync({ force: true }).then(() => {
+// Event.sync({ force: true }).then(() => {
   // Event.findOrCreate({
   //   where: { Name: 'test event 1' },
   //   // defaults: {
@@ -129,26 +133,28 @@ const Message = sequelize.define('message', {
   //   console.log(event.get({ plain: true }));
   //   console.log(created);
   // });
-//});
+// });
 
 // TEST DB-USER CREATION & QUERY
-// User.sync().then(() => {
-//   let hash = passwordHash.generate('test');
-//   //TEST password-hash
+// User.sync({ force: true }).then(() => {
+//   const hash = passwordHash.generate('test');
+//   // TEST password-hash
 //   User.findOrCreate({
-//     where: { Email: 'jake@test.com' }, defaults: {
+//     where: { Email: 'jake@test.com' }, 
+//     defaults: {
 //       Name: 'Jake Test',
 //       Host_Rating: 0,
 //       Contributor_Rating: 0,
+//       Notifications: '2',
 //       Email: 'jake@jake.com',
 //       City: 'New Orleans',
-//       Password: hash
-//     }
+//       Password: hash,
+//     },
 //   })
 //     .spread((user, created) => {
 //       console.log(user.get({ plain: true }));
 //       console.log(created);
-//     })
+//     });
 // });
 
 

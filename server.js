@@ -205,7 +205,7 @@ app.post('/create', (req, res) => {
   }
   let host;
   const {
-    location, name, meal,
+    location, name, meal, time,
   } = req.body;
   User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
     host = user.Name;
@@ -221,10 +221,10 @@ app.post('/create', (req, res) => {
         const resultObj = response.json.results[0];
         const addressComponents = resultObj.address_components;
         // console.log(addressComponents);
-        
+
         const latitude = resultObj.geometry.location.lat;
         const longitude = resultObj.geometry.location.lng;
-        
+
         // console.log(name, meal, latitude, longitude, host);
         Event.create({
           Name: name,
@@ -234,8 +234,7 @@ app.post('/create', (req, res) => {
           Address: location,
           City: addressComponents[3].short_name,
           Zip_Code: addressComponents[7].short_name,
-          // Come back to format this Date
-          Time: Date.now(),
+          Time: time,
           Host: host,
         }).then(() => {
           Event.find({ where: { Name: name } }).then((event) => {
@@ -271,15 +270,6 @@ app.get('/userevents', (req, res) => {
       console.log('user:', user);
       hostName = user.Name;
       Event.findAll({ where: { host: hostName } }).then((events) => {
-        // console.log('events:', events);
-        // const addresses = [];
-        // let i = 0;
-        // while (i < events.length - 1) {
-        //   googleMapsClient.reverseGeocode({ latlng: { lat: events[i].dataValues.LocationLat, lng: events[i].dataValues.LocationLng } }, (err, response) => {
-        //     console.log(response.json.results);
-        //     i++;
-        //   });
-        // }
         res.status(200).send(events);
       }, (err) => {
         console.log('error find userevents:', err);
@@ -291,6 +281,56 @@ app.get('/userevents', (req, res) => {
   }
 });
 
+app.post('/request', (req, res) => {
+  if (!req.user) {
+    res.status(401).send('log in first!');
+  } else {
+    console.log(req.body, req.user);
+    const partyName = req.body.name;
+    let host;
+    const request = `${partyName}: ${req.user.dataValues.Name}`;
+    Event.findOne({ where: { Name: partyName } }).then((event) => {
+      host = event.Host;
+    })
+      .then(() => {
+        let currentNotifications;
+        User.findOne({ where: { Name: host } }).then((user) => {
+          if (user.Notifications) {
+            currentNotifications = `${user.Notifications}, ${request}`;
+          } else {
+            currentNotifications = `${request}`;
+          }
+          console.log('current notifications: ', currentNotifications);
+        })
+          .then(() => {
+            User.update(
+              { Notifications: currentNotifications },
+              { where: { Name: host } },
+            )
+              .then((affectedRows) => {
+                console.log('user notifications: ', affectedRows);
+                res.status(201).send('Request successfully made');
+              });
+          })
+          .catch((err) => {
+            console.log('error in making request:', err);
+            res.status(500).send('error in making request');
+          });
+      });
+  }
+});
+
+app.get('/notifications', (req, res) => {
+  if (!req.user) {
+    res.status(401).send('login first');
+  } else {
+    User.findOne({ where: { Name: req.user.dataValues.Name } }).then((user) => {
+      let notifications = user.Notifications.split(',');
+      console.log(notifications);
+      res.status(200).send(notifications);
+    });
+  }
+});
 
 const port = process.env.PORT;
 
