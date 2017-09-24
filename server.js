@@ -271,15 +271,7 @@ app.get('/userevents', (req, res) => {
       console.log('user:', user);
       hostName = user.Name;
       Event.findAll({ where: { host: hostName } }).then((events) => {
-        // console.log('events:', events);
-        // const addresses = [];
-        // let i = 0;
-        // while (i < events.length - 1) {
-        //   googleMapsClient.reverseGeocode({ latlng: { lat: events[i].dataValues.LocationLat, lng: events[i].dataValues.LocationLng } }, (err, response) => {
-        //     console.log(response.json.results);
-        //     i++;
-        //   });
-        // }
+
         res.status(200).send(events);
       }, (err) => {
         console.log('error find userevents:', err);
