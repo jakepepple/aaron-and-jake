@@ -1,12 +1,12 @@
 <template>
     <div>
-        <div class="topnav" id="myTopnav">
+        <b-nav class="topnav" id="myTopnav">
             <router-link to="/home">Home</router-link>
             <router-link to="/profile">Profile</router-link>
             <router-link to="/login">Login/signup</router-link>
             <router-link to="/browse">Browse</router-link>
             <router-link to="/create">Create</router-link>
-        </div>
+        </b-nav>
 
     </div>
 </template>
