@@ -85,11 +85,7 @@ export default {
                 this.data.profileCity = response.body.City;
                 this.data.profileEmail = response.body.Email;
                 this.data.profileHR = response.body.hostRating;
-<<<<<<< HEAD
                 this.data.profileCR = response.body.contributorRating;
-=======
-                this.data.profileCR = response.body.contributorRating;                
->>>>>>> Create notifications hub on profile, successfully render party requests
             }, (err) => {
                 this.$router.push('/login');
             });
@@ -115,6 +111,9 @@ export default {
         sEvent(clickedEvent) {
             this.event = clickedEvent
             this.showEvent = !this.showEvent;
+        },
+        approveRequest(notification, index) {
+            console.log('approve:', this.data.notificationData[index]);
         }
 
     }
