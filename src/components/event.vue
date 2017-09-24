@@ -1,28 +1,32 @@
 <template>
-    <div id="Event">
-        <div id="app">
-            <button id="show-modal" @click="showModal = true">Show Modal</button>
-            <chat v-if="showModal" v-bind:event='event' @close="showModal = false">
+    <b-container id="Event">
+        <b-row>
+            <b-col>
+                <div cols='8' id="app">
+                    <b-btn id="show-modal" @click="showModal = true">Event Chat</b-btn>
+                    <chat v-if="showModal" v-bind:event='event' @close="showModal = false">
+                        <h3 slot="header">{{event.Name}}</h3>
+                    </chat>
+                </div>
+                <p>Host: {{event.Host}}</p>
+                <p>Party Name: {{event.Name}}</p>
+                <p>Recipe: {{meal.label}}</p>
+                <ul>
+                    <li v-for="Ingredient in meal.ingredientLines" v-bind:key="Ingredient.id">{{Ingredient}}</li>
+                </ul>
+                <p>Lat: {{event.LocationLat}}</p>
+                <p>Lng: {{event.LocationLng}}</p>
+                <p>Time: {{event.Time}}</p>
 
-                <h3 slot="header">{{event.Name}}</h3>
-            </chat>
-        </div>
-        <p>Host: {{event.Host}}</p>
-        <p>Party Name: {{event.Name}}</p>
-        <p>Recipe: {{meal.label}}</p>
-        <ul>
-            <li v-for="Ingredient in meal.ingredientLines" v-bind:key="Ingredient.id">{{Ingredient}}</li>
-        </ul>
-        <p>Lat: {{event.LocationLat}}</p>
-        <p>Lng: {{event.LocationLng}}</p>
-        <p>Time: {{event.Time}}</p>
-        <template>
-            <div class="google-map" :id="mapName">
-            </div>
-</template>
-
-       
-    </div>
+            </b-col>
+            <b-col>
+                <template>
+                    <div class="google-map" :id="mapName">
+                    </div>
+                </template>
+            </b-col>
+        </b-row>
+    </b-container>
 </template>
 
 <script>
@@ -72,15 +76,15 @@ export default {
             console.log(coord)
             const position = new google.maps.LatLng(coord.latitude, coord.longitude);
 
-             var contentString = 
-                    '<div>' +
-                    '<h2>' + `${this.event.Name}` + '</h2>' +
-                    '<p>' + 'Host: ' + `${this.event.Host}` + '</p>' +
-                    '<p>' + 'Address: ' + `${this.event.Address}` + '</p>' +
-                    '</div>'
-            
-            
-            
+            var contentString =
+                '<div>' +
+                '<h2>' + `${this.event.Name}` + '</h2>' +
+                '<p>' + 'Host: ' + `${this.event.Host}` + '</p>' +
+                '<p>' + 'Address: ' + `${this.event.Address}` + '</p>' +
+                '</div>'
+
+
+
             var infowindow = new google.maps.InfoWindow({
                 content: contentString
             });
@@ -118,8 +122,8 @@ export default {
 
 <style scoped>
 .google-map {
-    width: 300px;
-    height: 300px;
+    width: 500px;
+    height: 400px;
     margin: 0 auto;
     background: gray;
 }

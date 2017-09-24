@@ -20,16 +20,16 @@
         </div>
         <input id="handle" type="text" placeholder="Handle">
         <input id="message" type="text" placeholder="Message">
-        <button id="send">Send</button>
+        <b-btn id="send">Send</b-btn>
     </div>
             </slot>
           </div>
 
           <div class="modal-footer">
             <slot name="footer">
-              <button class="modal-default-button" @click="$emit('close')">
+              <b-btn class="modal-default-button" @click="$emit('close')">
                 Close chat
-              </button>
+              </b-btn>
             </slot>
           </div>
         </div>
