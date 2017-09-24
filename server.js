@@ -289,7 +289,7 @@ app.post('/request', (req, res) => {
     console.log(req.body, req.user);
     const partyName = req.body.name;
     let host;
-    const requestUser = req.user.dataValues.id;
+    const request = `${partyName}: ${req.user.dataValues.Name}`;
     Event.findOne({ where: { Name: partyName } }).then((event) => {
       host = event.Host;
     })
@@ -297,11 +297,11 @@ app.post('/request', (req, res) => {
         let currentNotifications;
         User.findOne({ where: { Name: host } }).then((user) => {
           if (user.Notifications) {
-            currentNotifications = `${user.Notifications} ${requestUser}`;
+            currentNotifications = `${user.Notifications}, ${request}`;
           } else {
-            currentNotifications = `${requestUser}`;
+            currentNotifications = `${request}`;
           }
-          console.log('current contributors: ', currentNotifications);
+          console.log('current notifications: ', currentNotifications);
         })
           .then(() => {
             User.update(
@@ -318,6 +318,18 @@ app.post('/request', (req, res) => {
             res.status(500).send('error in making request');
           });
       });
+  }
+});
+
+app.get('/notifications', (req, res) => {
+  if (!req.user) {
+    res.status(401).send('login first');
+  } else {
+    User.findOne({ where: { Name: req.user.dataValues.Name } }).then((user) => {
+      let notifications = user.Notifications.split(',');
+      console.log(notifications);
+      res.status(200).send(notifications);
+    });
   }
 });
 

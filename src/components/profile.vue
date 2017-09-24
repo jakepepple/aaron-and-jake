@@ -32,6 +32,13 @@
                     <span class="title">Guest Rating:</span> {{this.data.profileCR}}</p>
             </b-col>
             <b-col class='profile-buttons'>
+                <h4>Notifications:</h4>
+                <ul>
+                    <li v-for="notification in this.data.notifications" v-bind:notification="notification">
+                        {{notification}}
+                    </li>
+                </ul>
+
                 <h4 v-if="!showEvent">Events:</h4>
                 <b-btn v-if="showEvent" v-on:click='showEvent = !showEvent'> Close Event</b-btn>
                 <ul v-if="!showEvent">
@@ -64,6 +71,7 @@ export default {
                 profileEmail: '',
                 profileHR: '',
                 profileCR: '',
+                notifications: '',
                 events: [],
             }
 
@@ -77,7 +85,11 @@ export default {
                 this.data.profileCity = response.body.City;
                 this.data.profileEmail = response.body.Email;
                 this.data.profileHR = response.body.hostRating;
+<<<<<<< HEAD
                 this.data.profileCR = response.body.contributorRating;
+=======
+                this.data.profileCR = response.body.contributorRating;                
+>>>>>>> Create notifications hub on profile, successfully render party requests
             }, (err) => {
                 this.$router.push('/login');
             });
@@ -86,6 +98,17 @@ export default {
                 this.data.events = response.body;
             }, (err) => {
                 this.$router.push('/login');
+            })
+        this.$http.get('/notifications')
+            .then(function(response) {
+                console.log(response.body);
+                const notifications = response.body
+                const formattedNotifications = notifications.map((notification) => {
+                    let split = notification.split(':');
+                    return `${split[1]} wants to join your ${split[0]} party!`
+                })
+                console.log(formattedNotifications);
+                this.data.notifications = formattedNotifications || 'No notifications for now!';
             })
     },
     methods: {
