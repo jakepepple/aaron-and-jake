@@ -10,9 +10,7 @@
             <label>Event Time:</label>
             <input type="text" v-model="eventData.time" placeholder="Event Time"><br/>
             <label>Event Location:</label>
-            <input type="text" v-model="eventData.address" placeholder="Event Address"><br/>
-            <input type="text" v-model="eventData.city" placeholder="Event City"><br/>
-            <input type="text" v-model="eventData.zip" placeholder="Event Zip"><br/>
+            <input type="text" v-model="eventData.location" placeholder="Event location"><br/>
             <label>Recipe lookup</label>
             <input type='text' v-model="food" placeholder="meal lookup">
             <button @click.prevent="lookUp">lookUp</button><br/>
@@ -41,9 +39,7 @@ export default {
             eventData: {
                 name: '',
                 time: '',
-                address: '',
-                city: '',
-                zip: '',
+                location: '',
                 meal: ''
             }
         }

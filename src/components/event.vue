@@ -69,13 +69,14 @@ export default {
 
 
         this.markerCoordinates.forEach((coord) => {
+            console.log(coord)
             const position = new google.maps.LatLng(coord.latitude, coord.longitude);
 
              var contentString = 
                     '<div>' +
-                    '<h2>' + `${coord.event.Name}` + '</h2>' +
-                    '<p>' + 'Host: ' + `${coord.event.Host}` + '</p>' +
-                    '<p>' + 'Address: ' + `${coord.event.Address}` + '</p>' +
+                    '<h2>' + `${this.event.Name}` + '</h2>' +
+                    '<p>' + 'Host: ' + `${this.event.Host}` + '</p>' +
+                    '<p>' + 'Address: ' + `${this.event.Address}` + '</p>' +
                     '</div>'
             
             
