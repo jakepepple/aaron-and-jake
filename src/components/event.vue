@@ -8,15 +8,16 @@
                         <h3 slot="header">{{event.Name}}</h3>
                     </chat>
                 </div>
-                <p>Host: {{event.Host}}</p>
                 <p>Party Name: {{event.Name}}</p>
+                <p>Host: {{event.Host}}</p>
+                <p>Address: {{event.Address}}</p>
+                <p>Time: {{event.Time}}</p>
                 <p>Recipe: {{meal.label}}</p>
                 <ul>
                     <li v-for="Ingredient in meal.ingredientLines" v-bind:key="Ingredient.id">{{Ingredient}}</li>
                 </ul>
-                <p>Lat: {{event.LocationLat}}</p>
-                <p>Lng: {{event.LocationLng}}</p>
-                <p>Time: {{event.Time}}</p>
+                
+                
 
             </b-col>
             <b-col>
