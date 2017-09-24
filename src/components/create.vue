@@ -1,25 +1,39 @@
 <template>
-    <div id="app">
-        <form>
-            
-        </form>
-        <form>
-            <label>Create Event</label><br/>
-            <label>Event Name:</label>
-            <input type="text" v-model="eventData.name" placeholder="Event Name"><br/>
-            <label>Event Time:</label>
-            <input type="text" v-model="eventData.time" placeholder="Event Time"><br/>
-            <label>Event Location:</label>
-            <input type="text" v-model="eventData.location" placeholder="Event location"><br/>
-            <label>Recipe lookup</label>
-            <input type='text' v-model="food" placeholder="meal lookup">
-            <button @click.prevent="lookUp">lookUp</button><br/>
-            <button @click.prevent="create">Create Event</button>
-        </form>
-
-        <recipes v-if="populateList" v-bind:meals="meals" v-bind:populateList="populateList" v-on:hideList="hideList($event)"></recipes>
+    <b-jumbotron header="New Event">
       
-    </div>
+<b-row>
+    <b-col cols='6'>
+        <b-form>
+            <label>Event Name:</label>
+            <b-form-input type="text" v-model="eventData.name" placeholder="Event Name"></b-form-input>
+                <br/>
+            <label>Event Data:</label>
+            <b-form-input type="date" v-model="eventData.time" placeholder="Event Time"></b-form-input>
+                <br/>
+            <label>Event Time:</label>
+            <b-form-input type="time" v-model="eventData.time" placeholder="Event Time"></b-form-input>
+                <br/>
+            <label>Event Location:</label>
+            <b-form-input type="text" v-model="eventData.location" placeholder="Event location"></b-form-input>
+                <br/>
+            <label>Recipe lookup</label>
+            <b-form-input type='text' v-model="food" placeholder="Recipe lookup"></b-form-input>
+            <b-button @click.prevent="lookUp">Recipe lookUp</b-button>
+            <b-button @click.prevent="create">Create Event</b-button>
+        </b-form>
+    </b-col>
+    <b-col >
+        <recipes v-if="populateList" v-bind:meals="meals" v-bind:populateList="populateList" v-on:hideList="hideList($event)"></recipes>
+        <div v-if="showMeal">
+         <p>Your meal: {{showSelection.label}}</p>
+        <img v-bind:src="showSelection.image"/>
+        </div>
+    </b-col>
+</b-row>
+<!-- <b-row>
+    <recipes v-if="populateList" v-bind:meals="meals" v-bind:populateList="populateList" v-on:hideList="hideList($event)"></recipes>
+</b-row> -->
+    </b-jumbotron>
 </template>
 <script>
 // Imports
@@ -32,6 +46,8 @@ export default {
     },
     data() {
         return {
+            showMeal: false,
+            showSelection: '',
             food: '',
             populateList: false,
             meals: [],
@@ -73,8 +89,12 @@ export default {
 
         },
         hideList(change) {
+            this.showMeal = true;
             this.populateList = change[0];
-            this.eventData.meal = change[1]; 
+            this.eventData.meal = change[1].uri.split('#')[1];
+            this.food = change[1].label;
+            this.showSelection = change[1];
+
         }
     }
 }

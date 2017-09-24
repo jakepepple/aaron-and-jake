@@ -11,7 +11,7 @@
                         {{Ingredient}}
                     </li>
                 </ul>
-                <button v-on:click="mealSelected(meal.recipe.uri)" >This is the meal for me</button>
+                <b-btn v-on:click="mealSelected(meal.recipe)" >This is the meal for me</b-btn>
             </li>
         </ul>
     </div>
@@ -29,9 +29,9 @@ export default {
     },
     methods: {
         mealSelected(id){
-            this.mealId = id.split('#')[1]
-            console.log(this.mealId)
-            this.$emit('hideList', [false, this.mealId])
+            // this.mealId = id.split('#')[1]
+            // console.log(this.mealId)
+            this.$emit('hideList', [false, id])
             
 
         }
