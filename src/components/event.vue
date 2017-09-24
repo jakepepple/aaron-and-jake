@@ -115,7 +115,7 @@ export default {
                     app_id: 'e4a1bc0f',
                     app_key: '19aa09f1b7b01b5afa733a72bdef0873',
                 }
-            ).then(function(response) {
+            }).then(function(response) {
                 this.meal = response.body[0]
             });
             

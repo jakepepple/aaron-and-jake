@@ -205,7 +205,7 @@ app.post('/create', (req, res) => {
   }
   let host;
   const {
-    location, name, meal,
+    location, name, meal, time,
   } = req.body;
   User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
     host = user.Name;
@@ -234,8 +234,7 @@ app.post('/create', (req, res) => {
           Address: location,
           City: addressComponents[3].short_name,
           Zip_Code: addressComponents[7].short_name,
-          // Come back to format this Date
-          Time: Date.now(),
+          Time: time,
           Host: host,
         }).then(() => {
           Event.find({ where: { Name: name } }).then((event) => {
