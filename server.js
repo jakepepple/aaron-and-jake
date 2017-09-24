@@ -221,10 +221,10 @@ app.post('/create', (req, res) => {
         const resultObj = response.json.results[0];
         const addressComponents = resultObj.address_components;
         // console.log(addressComponents);
-        
+
         const latitude = resultObj.geometry.location.lat;
         const longitude = resultObj.geometry.location.lng;
-        
+
         // console.log(name, meal, latitude, longitude, host);
         Event.create({
           Name: name,
@@ -271,7 +271,6 @@ app.get('/userevents', (req, res) => {
       console.log('user:', user);
       hostName = user.Name;
       Event.findAll({ where: { host: hostName } }).then((events) => {
-
         res.status(200).send(events);
       }, (err) => {
         console.log('error find userevents:', err);
@@ -283,6 +282,44 @@ app.get('/userevents', (req, res) => {
   }
 });
 
+app.post('/request', (req, res) => {
+  if (!req.user) {
+    res.status(401).send('log in first!');
+  } else {
+    console.log(req.body, req.user);
+    const partyName = req.body.name;
+    let host;
+    const requestUser = req.user.dataValues.id;
+    Event.findOne({ where: { Name: partyName } }).then((event) => {
+      host = event.Host;
+    })
+      .then(() => {
+        let currentNotifications;
+        User.findOne({ where: { Name: host } }).then((user) => {
+          if (user.Notifications) {
+            currentNotifications = `${user.Notifications} ${requestUser}`;
+          } else {
+            currentNotifications = `${requestUser}`;
+          }
+          console.log('current contributors: ', currentNotifications);
+        })
+          .then(() => {
+            User.update(
+              { Notifications: currentNotifications },
+              { where: { Name: host } },
+            )
+              .then((affectedRows) => {
+                console.log('user notifications: ', affectedRows);
+                res.status(201).send('Request successfully made');
+              });
+          })
+          .catch((err) => {
+            console.log('error in making request:', err);
+            res.status(500).send('error in making request');
+          });
+      });
+  }
+});
 
 const port = process.env.PORT;
 
