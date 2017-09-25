@@ -46,13 +46,16 @@
 <script>
 // Imports
 export default {
+  props: [
+    'event'
+  ],
     data() {
         return {
 
         }
     },
     mounted() {
-        const socket = io.connect('http://localhost:8080');
+        const socket = io.connect('http://localhost:3001');
 
 
         let message = document.getElementById('message');
@@ -61,11 +64,17 @@ export default {
         let output = document.getElementById('output');
         let feedback = document.getElementById('feedback');
 
+        let eventName = this.event.Name;
+        console.log(eventName);
+        socket.emit('open', {
+          event: eventName,
+        })
 
         btn.addEventListener('click', () => {
             socket.emit('chat', {
                 message: message.value,
                 handle: handle.value,
+                event: eventName,
             });
         });
 
@@ -108,7 +117,7 @@ h2 {
 }
 
 #chat-window {
-    height: 400px;
+    height: 300px;
     overflow: auto;
     background: #f9f9f9;
 }

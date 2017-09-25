@@ -165,6 +165,7 @@ app.get('/profile', (req, res) => {
           City: user.City,
           memberSince: user.createdAt,
           Birthday: user.Birthday,
+          Image: user.Image || null,
         };
         res.status(200).send(dataToSend);
       });
@@ -186,6 +187,7 @@ app.post('/signup', (req, res) => {
       City: req.body.city,
       Password: hash,
       Birthday: req.body.dob,
+      Image: req.body.Image || null,
     },
   })
     .spread((user, created) => {
@@ -281,7 +283,7 @@ app.get('/userevents', (req, res) => {
         hostName = user.Name;
         Event.findAll({ where: { host: hostName } }).then((events) => {
           console.log(events);
-          
+
           res.status(200).send(events.concat(guestEvents));
         }, (err) => {
           console.log('error find userevents:', err);
@@ -386,16 +388,18 @@ const io = socket(server);
 
 io.on('connection', (currentSocket) => {
   console.log('made currentSocket connection', currentSocket.id);
-  // let isInitialConnection = false;
-
-  // if (!isInitialConnection) {
-  //   Message.findAll().then((messages) => {
-  //     messages.forEach((message) => {
-  //       io.currentSocket.emit('chat', message);
-  //     });
-  //     isInitialConnection = true;
-  //   });
-  // }
+  currentSocket.on('open', (data) => {
+    Message.findAll({ where: { Event: data.event } }).then((messages) => {
+      messages.forEach((message) => {
+        const messageToSend = {
+          handle: message.Handle,
+          message: message.Message,
+          event: message.Event,
+        };
+        currentSocket.emit('chat', messageToSend);
+      });
+    });
+  });
 
   currentSocket.on('chat', (data) => {
     Message.create({ Handle: data.handle, Message: data.message, Event: data.event })

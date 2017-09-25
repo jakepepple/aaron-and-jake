@@ -1,7 +1,12 @@
 <template>
     <div>
+        
         <b-nav class="topnav" id="myTopnav">
-            <router-link to="/home">Home</router-link>
+            
+    <h4>PotLucky</h4>
+    
+
+            <router-link to="/">Home</router-link>
             <router-link to="/profile">Profile</router-link>
             <router-link to="/login">Login/signup</router-link>
             <router-link to="/browse">Browse</router-link>
@@ -29,7 +34,7 @@ export default {
 .topnav {
     background-color: #333;
     overflow: hidden;
-   padding-top: 70px; 
+   padding-top: 40px; 
     
 }
 
@@ -42,6 +47,11 @@ export default {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
+}
+
+h4 {
+    color: #f2f2f2;
+    padding: 14px 16px;
 }
 
 /* Change the color of links on hover */
