@@ -340,18 +340,29 @@ app.post('/approve', (req, res) => {
   let currentContributors;
   Event.findOne({ where: { Name: req.body.eventName } }).then((event) => {
     if (event.Contributor_List) {
-      currentContributors = event.Contributor_List;
+      currentContributors = `${event.Contributor_List} ${req.body.approvedUser}`;
     } else {
-      currentContributors = '';
+      currentContributors = req.body.approvedUser;
     }
-  }).then(() => {
-    Event.update({ Contributor_List: `${currentContributors} ${req.body.approvedUser}` }, { where: { Name: req.body.eventName } }).then((affectedRows) => {
-      console.log('contributor list updated: ', affectedRows);
-      res.status(201).send('request approved');
+  })
+    .then(() => {
+      const eventPair = `${req.body.eventName}:${req.body.approvedUser}`;
+      let notifications;
+      User.findOne({ where: { Name: req.user.dataValues.Name } }).then((user) => {
+        notifications = user.Notifications.replace(eventPair, '');
+      }).then(() => {
+        User.update({ Notifications: notifications }, { where: { Name: req.user.dataValues.Name } });
+      });
+    })
+    .then(() => {
+      Event.update({ Contributor_List: currentContributors }, { where: { Name: req.body.eventName } }).then((affectedRows) => {
+        console.log('contributor list updated: ', affectedRows);
+        res.status(201).send('request approved');
+      });
+    })
+    .catch((err) => {
+      res.status(500).send('error approving requesT:', err);
     });
-  }).catch((err) => {
-    res.status(500).send('error approving requesT:', err);
-  });
 });
 
 const port = process.env.PORT;

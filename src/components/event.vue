@@ -15,6 +15,12 @@
                 <p>Host: {{event.Host}}</p>
                 <p>Address: {{event.Address}}</p>
                 <p>Time: {{event.Time}}</p>
+                <p>Guests:</p>
+                
+    <ul v-if="event.Contributor_List">
+        <li v-for="guest in event.Contributor_List.split(' ')" v-bind:key="guest">{{guest}}</li>
+    </ul>
+
                 <p>Recipe: {{meal.label}}</p>
                 <ul>
                     <li v-for="Ingredient in meal.ingredientLines" v-bind:key="Ingredient.id">{{Ingredient}}</li>

@@ -127,7 +127,8 @@ export default {
                 eventName: data[0],
                 approvedUser: data[1],
             }).then((response) => {
-                this.notifications = 'approved!';
+                this.data.notifications.splice(index, 1);
+                this.data.notificationData.splice(index, 1);
             }).catch((err) => {
                 console.log('error approving request');
             })
