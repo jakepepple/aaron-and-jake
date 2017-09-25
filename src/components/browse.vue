@@ -3,6 +3,9 @@
     </div>
 </template>
 <script>
+window.clickMe = () => {
+    console.log('confirm');
+}
 import mapMarkerData from './marker.vue';
 export default {
     components: {
@@ -21,6 +24,9 @@ export default {
             bounds: null,
             markers: [],
         }
+    },
+    methods:{
+
     },
 
     mounted: function() {
@@ -49,6 +55,7 @@ export default {
                     '<h2>' + `${coord.event.Name}` + '</h2>' +
                     '<p>' + 'Host: ' + `${coord.event.Host}` + '</p>' +
                     '<p>' + 'Address: ' + `${coord.event.Address}` + '</p>' +
+                    '<button onclick="window.clickMe()">Click me</button>' +
                     '</div>'
                     var infowindow = new google.maps.InfoWindow({
                         content: contentString
@@ -57,6 +64,7 @@ export default {
                         position,
                         map: this.map,
                     });
+
                     marker.addListener('click', function() {
                         infowindow.open(this.map, marker);
                     });
@@ -64,6 +72,7 @@ export default {
                     this.map.fitBounds(this.bounds.extend(position))
 
                 });
+                
 
 
             })

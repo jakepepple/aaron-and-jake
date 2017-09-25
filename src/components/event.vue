@@ -127,13 +127,6 @@ export default {
             
         },
     methods: {
-        makeRequest: function(name) {
-            this.$http.post('/request', {
-                name: name,
-            }).then(function(response) {
-                console.log(response);
-            })
-        }
     }
 }
 </script>

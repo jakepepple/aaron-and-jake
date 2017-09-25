@@ -1,8 +1,8 @@
 <template>
-  <div id="app" >
+  <div id="app">
     <nav-bar></nav-bar>
     <router-view></router-view>
-    <!-- <app-footer></app-footer> -->
+  
   </div>
 </template>
 
@@ -33,4 +33,6 @@ export default {
 </script>
 
 <style>
+
+
 </style>
