@@ -9,7 +9,7 @@
                         <img class="card-bkimg" alt="" src="https://scontent-dft4-3.xx.fbcdn.net/v/t1.0-9/10447708_10105496802291065_3147331436798292945_n.jpg?oh=ff797fce9d955f7447e90ee529022d1c&oe=5A420D4C">
                     </div>
                     <div class="useravatar">
-                        <img alt="" src="http://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?k=6&m=476085198&s=612x612&w=0&h=5cDQxXHFzgyz8qYeBQu2gCZq1_TN0z40e_8ayzne0X0=">
+                        <img alt="" src={{this.data.image}}>
                     </div>
                     <div class="card-info">
                         <span class="card-title">{{this.data.profileName}}</span>
@@ -44,7 +44,10 @@
                 <h4 v-if="!showEvent">Events:</h4>
                 <b-btn v-if="showEvent" v-on:click='showEvent = !showEvent'> Close Event</b-btn>
                 <ul v-if="!showEvent">
-                    <li v-for="event in this.data.events" v-bind:key="event.id" v-on:click="sEvent(event)">{{event.Name}}</li>
+                    <li v-for="event in this.data.events" v-bind:key="event.id">
+                        {{event.Name}}
+                        <b-btn v-on:click='sEvent(event)'>Event Details</b-btn>
+                    </li>
                 </ul>
             </b-col>
         </b-row>
@@ -77,6 +80,7 @@ export default {
                 notifications: '',
                 notificationData: [],
                 events: [],
+                image: '',
             }
 
 
@@ -92,6 +96,7 @@ export default {
                 this.data.profileHR = response.body.hostRating;
                 this.data.profileCR = response.body.contributorRating;
                 this.data.birthday = response.body.Birthday;
+                this.data.image = response.body.Image || "http://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?k=6&m=476085198&s=612x612&w=0&h=5cDQxXHFzgyz8qYeBQu2gCZq1_TN0z40e_8ayzne0X0=";
             }, (err) => {
                 this.$router.push('/login');
             });
