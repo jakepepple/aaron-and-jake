@@ -7,8 +7,8 @@
             <label>Event Name:</label>
             <b-form-input type="text" v-model="eventData.name" placeholder="Event Name"></b-form-input>
                 <br/>
-            <label>Event Data:</label>
-            <b-form-input type="date" v-model="eventData.time" placeholder="Event Time"></b-form-input>
+            <label>Event Date:</label>
+            <b-form-input type="date" v-model="eventData.date" placeholder="Event Time"></b-form-input>
                 <br/>
             <label>Event Time:</label>
             <b-form-input type="time" v-model="eventData.time" placeholder="Event Time"></b-form-input>
@@ -55,6 +55,7 @@ export default {
             eventData: {
                 name: '',
                 time: '',
+                date: '',
                 location: '',
                 meal: ''
             }

@@ -25,7 +25,7 @@
                 <p>
                     <span class="title">Current City:</span> {{this.data.profileCity}}</p>
                 <p>
-                    <span class="title">Date of birth:</span> 14.02.1989</p>
+                    <span class="title">Date of birth:</span> {{this.data.birthday}}</p>
                 <p>
                     <span class="title">Host Rating:</span> {{this.data.profileHR}}</p>
                 <p>
@@ -34,8 +34,10 @@
             <b-col class='profile-buttons'>
                 <h4>Notifications:</h4>
                 <ul>
-                    <li v-for="notification in this.data.notifications" v-bind:notification="notification">
+                    <li v-for="(notification, index) in this.data.notifications" v-bind:notification="notification">
                         {{notification}}
+                         <br>
+                        <b-button id="approve" @click="approveRequest(notification, index)">Approve this request</b-button> 
                     </li>
                 </ul>
 
@@ -71,7 +73,9 @@ export default {
                 profileEmail: '',
                 profileHR: '',
                 profileCR: '',
+                birthday: '',
                 notifications: '',
+                notificationData: [],
                 events: [],
             }
 
@@ -86,6 +90,7 @@ export default {
                 this.data.profileEmail = response.body.Email;
                 this.data.profileHR = response.body.hostRating;
                 this.data.profileCR = response.body.contributorRating;
+                this.data.birthday = response.body.Birthday;
             }, (err) => {
                 this.$router.push('/login');
             });
@@ -98,12 +103,15 @@ export default {
         this.$http.get('/notifications')
             .then(function(response) {
                 console.log(response.body);
-                const notifications = response.body
+                let notificationDataPairs = [];
+                const notifications = response.body;
                 const formattedNotifications = notifications.map((notification) => {
                     let split = notification.split(':');
+                    notificationDataPairs.push(split);
                     return `${split[1]} wants to join your ${split[0]} party!`
                 })
                 console.log(formattedNotifications);
+                this.data.notificationData = notificationDataPairs;
                 this.data.notifications = formattedNotifications || 'No notifications for now!';
             })
     },
@@ -114,6 +122,16 @@ export default {
         },
         approveRequest(notification, index) {
             console.log('approve:', this.data.notificationData[index]);
+            const data = this.data.notificationData[index];
+            this.$http.post('/approve', {
+                eventName: data[0],
+                approvedUser: data[1],
+            }).then((response) => {
+                this.notifications = 'approved!';
+            }).catch((err) => {
+                console.log('error approving request');
+            })
+
         }
 
     }

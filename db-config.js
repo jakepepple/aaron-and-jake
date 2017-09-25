@@ -44,6 +44,13 @@ const User = sequelize.define('user', {
   Notifications: {
     type: Sequelize.STRING,
   },
+  Birthday: {
+    // format: YYYY-MM-DD
+    type: Sequelize.STRING,
+  },
+  Image: {
+    type: Sequelize.STRING,
+  },
 });
 
 const Event = sequelize.define('event', {
@@ -62,8 +69,13 @@ const Event = sequelize.define('event', {
   Address: {
     type: Sequelize.STRING,
   },
+  Date: {
+    // format: YYYY-MM-DD
+    type: Sequelize.STRING,
+  },
   Time: {
-    type: Sequelize.DATE,
+    // Military time
+    type: Sequelize.STRING,
   },
   Host: {
     type: Sequelize.STRING,
@@ -107,35 +119,36 @@ const Message = sequelize.define('message', {
 
 // TEST DB-EVENT CREATION & QUERY
 // Event.sync({ force: true }).then(() => {
-  // Event.findOrCreate({
-  //   where: { Name: 'test event 1' },
-  //   // defaults: {
-  //   //   RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
-  //   //   Address: '748 Camp St',
-  //   //   LocationLat: 29.945947,
-  //   //   LocationLng: -90.0700232,
-  //   //   Time: Date.now(),
-  //   //   Host: 'jp',
-  //   // },
-  //   defaults: {
-  //     RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
-  //     Address: '729 Louque Pl',
-  //     City: 'New Orleans',
-  //     Zip_Code: 70124,
-  //     Contributor_List: '2',
-  //     LocationLat:
-  //   29.9891516,
-  //     LocationLng: -90.1087028,
-  //     Time: Date.now(),
-  //     Host: 'jp',
-  //   },
-  // }).spread((event, created) => {
-  //   console.log(event.get({ plain: true }));
-  //   console.log(created);
-  // });
+//   Event.findOrCreate({
+//     where: { Name: 'test event 1' },
+//     // defaults: {
+//     //   RecipeID: 'http://www.edamam.com/ontologies/edamam.owl%23recipe_23086a94b64c2ba96e12b0dde8b23eb4',
+//     //   Address: '748 Camp St',
+//     //   LocationLat: 29.945947,
+//     //   LocationLng: -90.0700232,
+//     //   Time: Date.now(),
+//     //   Host: 'jp',
+//     // },
+//     defaults: {
+//       RecipeID: 'recipe_23086a94b64c2ba96e12b0dde8b23eb4',
+//       Address: '729 Louque Pl',
+//       City: 'New Orleans',
+//       Zip_Code: 70124,
+//       Contributor_List: '',
+//       LocationLat:
+//     29.9891516,
+//       LocationLng: -90.1087028,
+//       Date: '2017-11-5',
+//       Time: '14:00',
+//       Host: 'jp',
+//     },
+//   }).spread((event, created) => {
+//     console.log(event.get({ plain: true }));
+//     console.log(created);
+//   });
 // });
 
-// TEST DB-USER CREATION & QUERY
+// // TEST DB-USER CREATION & QUERY
 // User.sync({ force: true }).then(() => {
 //   const hash = passwordHash.generate('test');
 //   // TEST password-hash
@@ -145,10 +158,12 @@ const Message = sequelize.define('message', {
 //       Name: 'Jake Test',
 //       Host_Rating: 0,
 //       Contributor_Rating: 0,
-//       Notifications: '2',
+//       Notifications: '',
 //       Email: 'jake@jake.com',
 //       City: 'New Orleans',
 //       Password: hash,
+//       Birthday: '1993-07-21',
+//       Image: '',
 //     },
 //   })
 //     .spread((user, created) => {
