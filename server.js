@@ -164,6 +164,7 @@ app.get('/profile', (req, res) => {
           Email: user.Email,
           City: user.City,
           memberSince: user.createdAt,
+          Birthday: user.Birthday,
         };
         res.status(200).send(dataToSend);
       });
@@ -184,6 +185,7 @@ app.post('/signup', (req, res) => {
       Contributor_Rating: 0,
       City: req.body.city,
       Password: hash,
+      Birthday: req.body.dob,
     },
   })
     .spread((user, created) => {
@@ -205,7 +207,7 @@ app.post('/create', (req, res) => {
   }
   let host;
   const {
-    location, name, meal, time,
+    location, name, meal, time, date,
   } = req.body;
   User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
     host = user.Name;
@@ -234,6 +236,7 @@ app.post('/create', (req, res) => {
           Address: location,
           City: addressComponents[3].short_name,
           Zip_Code: addressComponents[7].short_name,
+          Date: date,
           Time: time,
           Host: host,
         }).then(() => {
@@ -288,7 +291,7 @@ app.post('/request', (req, res) => {
     console.log(req.body, req.user);
     const partyName = req.body.name;
     let host;
-    const request = `${partyName}: ${req.user.dataValues.Name}`;
+    const request = `${partyName}:${req.user.dataValues.Name}`;
     Event.findOne({ where: { Name: partyName } }).then((event) => {
       host = event.Host;
     })
@@ -296,17 +299,14 @@ app.post('/request', (req, res) => {
         let currentNotifications;
         User.findOne({ where: { Name: host } }).then((user) => {
           if (user.Notifications) {
-            currentNotifications = `${user.Notifications}, ${request}`;
+            currentNotifications = `${user.Notifications},${request}`;
           } else {
             currentNotifications = `${request}`;
           }
           console.log('current notifications: ', currentNotifications);
         })
           .then(() => {
-            User.update(
-              { Notifications: currentNotifications },
-              { where: { Name: host } },
-            )
+            User.update({ Notifications: currentNotifications }, { where: { Name: host } })
               .then((affectedRows) => {
                 console.log('user notifications: ', affectedRows);
                 res.status(201).send('Request successfully made');
@@ -325,11 +325,33 @@ app.get('/notifications', (req, res) => {
     res.status(401).send('login first');
   } else {
     User.findOne({ where: { Name: req.user.dataValues.Name } }).then((user) => {
-      let notifications = user.Notifications.split(',');
-      console.log(notifications);
-      res.status(200).send(notifications);
+      if (!user.Notifications) {
+        res.status(200).send('no notifications!');
+      } else {
+        const notifications = user.Notifications.split(',');
+        console.log(notifications);
+        res.status(200).send(notifications);
+      }
     });
   }
+});
+
+app.post('/approve', (req, res) => {
+  let currentContributors;
+  Event.findOne({ where: { Name: req.body.eventName } }).then((event) => {
+    if (event.Contributor_List) {
+      currentContributors = event.Contributor_List;
+    } else {
+      currentContributors = '';
+    }
+  }).then(() => {
+    Event.update({ Contributor_List: `${currentContributors} ${req.body.approvedUser}` }, { where: { Name: req.body.eventName } }).then((affectedRows) => {
+      console.log('contributor list updated: ', affectedRows);
+      res.status(201).send('request approved');
+    });
+  }).catch((err) => {
+    res.status(500).send('error approving requesT:', err);
+  });
 });
 
 const port = process.env.PORT;
