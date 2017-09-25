@@ -102,19 +102,24 @@ export default {
             })
         this.$http.get('/notifications')
             .then(function(response) {
-                if (!response.body.notifications) {
+                if (!response.body.length) {
                     return;
                 }
+                console.log(response.body);
                 let notificationDataPairs = [];
                 const notifications = response.body;
-                const formattedNotifications = notifications.map((notification) => {
-                    let split = notification.split(':');
-                    notificationDataPairs.push(split);
-                    return `${split[1]} wants to join your ${split[0]} party!`
+                let formattedNotifications = [];
+                notifications.forEach((notification) => {
+                    if (notification !== '') {
+                        let split = notification.split(':');
+                        notificationDataPairs.push(split);
+                        formattedNotifications.push(`${split[1]} wants to join your ${split[0]} party!`);
+                    }
                 })
-                console.log(formattedNotifications);
+
                 this.data.notificationData = notificationDataPairs;
-                this.data.notifications = formattedNotifications || 'No notifications for now!';
+                console.log(formattedNotifications);
+                this.data.notifications = formattedNotifications.length ? formattedNotifications : [];
             })
     },
     methods: {
