@@ -67,10 +67,7 @@ export default {
                 city: this.signUpForm.city,
                 email: this.signUpForm.email
             }).then(function(data, status, request) {
-                console.log(data);
-                console.log(status);
-                console.log(request);
-                this.signUpForm.name = ''
+                this.signUpForm.name = '';
                 this.signUpForm.password = ''
                 this.signUpForm.city = ''
                 this.signUpForm.email = ''

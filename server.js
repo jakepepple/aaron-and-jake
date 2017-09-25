@@ -303,10 +303,7 @@ app.post('/request', (req, res) => {
           console.log('current notifications: ', currentNotifications);
         })
           .then(() => {
-            User.update(
-              { Notifications: currentNotifications },
-              { where: { Name: host } },
-            )
+            User.update({ Notifications: currentNotifications }, { where: { Name: host } })
               .then((affectedRows) => {
                 console.log('user notifications: ', affectedRows);
                 res.status(201).send('Request successfully made');
@@ -325,7 +322,7 @@ app.get('/notifications', (req, res) => {
     res.status(401).send('login first');
   } else {
     User.findOne({ where: { Name: req.user.dataValues.Name } }).then((user) => {
-      let notifications = user.Notifications.split(',');
+      const notifications = user.Notifications.split(',');
       console.log(notifications);
       res.status(200).send(notifications);
     });
