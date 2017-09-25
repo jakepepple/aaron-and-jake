@@ -5,7 +5,7 @@
                 <div cols='8' id="app">
                     <b-btn id="show-modal" @click="showModal = true">Event Chat</b-btn>
                     
-    <button id="request" @click="makeRequest(event.Name)">Request to be Added to Party</button>
+    
 
                     <chat v-if="showModal" v-bind:event='event' @close="showModal = false">
                         <h3 slot="header">{{event.Name}}</h3>

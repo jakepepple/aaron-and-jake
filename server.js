@@ -268,15 +268,25 @@ app.get('/events', (req, res) => {
 app.get('/userevents', (req, res) => {
   console.log('/userevents', req.cookies.user);
   if (req.user) {
-    let hostName;
-    User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
-      console.log('user:', user);
-      hostName = user.Name;
-      Event.findAll({ where: { host: hostName } }).then((events) => {
-        res.status(200).send(events);
-      }, (err) => {
-        console.log('error find userevents:', err);
-        res.status(500).send(err);
+    const guestEvents = [];
+    Event.findAll().then((events) => {
+      events.forEach((event) => {
+        if (event.Contributor_List.includes(req.user.dataValues.Name)) {
+          guestEvents.push(event);
+        }
+      });
+    }).then(() => {
+      let hostName;
+      User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
+        hostName = user.Name;
+        Event.findAll({ where: { host: hostName } }).then((events) => {
+          console.log(events);
+          
+          res.status(200).send(events.concat(guestEvents));
+        }, (err) => {
+          console.log('error find userevents:', err);
+          res.status(500).send(err);
+        });
       });
     });
   } else {
@@ -288,7 +298,7 @@ app.post('/request', (req, res) => {
   if (!req.user) {
     res.status(401).send('log in first!');
   } else {
-    console.log(req.body, req.user);
+    // console.log(req.body, req.user);
     const partyName = req.body.name;
     let host;
     const request = `${partyName}:${req.user.dataValues.Name}`;
