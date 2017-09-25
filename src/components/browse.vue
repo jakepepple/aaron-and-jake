@@ -4,7 +4,7 @@
 </template>
 <script>
 window.clickMe = () => {
-    console.log('confirm');
+   return;
 }
 import mapMarkerData from './marker.vue';
 export default {
@@ -37,6 +37,7 @@ export default {
             center: new google.maps.LatLng(mapCentre.latitude, mapCentre.longitude)
         }
         this.map = new google.maps.Map(element, options);
+        const context = this;
 
         this.$http.get('/browse')
             .then(function(response) {
@@ -55,7 +56,7 @@ export default {
                     '<h2>' + `${coord.event.Name}` + '</h2>' +
                     '<p>' + 'Host: ' + `${coord.event.Host}` + '</p>' +
                     '<p>' + 'Address: ' + `${coord.event.Address}` + '</p>' +
-                    '<button onclick="window.clickMe()">Click me</button>' +
+                    '<button id="request" onclick="window.clickMe()">Click me</button>' +
                     '</div>'
                     var infowindow = new google.maps.InfoWindow({
                         content: contentString
@@ -63,10 +64,21 @@ export default {
                     var marker = new google.maps.Marker({
                         position,
                         map: this.map,
+                        event: coord.event,
                     });
 
                     marker.addListener('click', function() {
                         infowindow.open(this.map, marker);
+                        let message = document.getElementById('request');
+                        message.addEventListener('click', () => {
+                            context.$http.post('/request', {
+                                name: marker.event.Name,
+                            }).then(function(response) {
+                                console.log(response);
+                            })
+                        
+                            });
+
                     });
                     this.markers.push(marker)
                     this.map.fitBounds(this.bounds.extend(position))
