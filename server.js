@@ -273,8 +273,10 @@ app.get('/userevents', (req, res) => {
     const guestEvents = [];
     Event.findAll().then((events) => {
       events.forEach((event) => {
-        if (event.Contributor_List.includes(req.user.dataValues.Name)) {
-          guestEvents.push(event);
+        if (event.Contributor_List) {
+          if (event.Contributor_List.includes(req.user.dataValues.Name)) {
+            guestEvents.push(event);
+          }
         }
       });
     }).then(() => {
