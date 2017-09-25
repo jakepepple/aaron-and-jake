@@ -186,6 +186,7 @@ app.post('/signup', (req, res) => {
       City: req.body.city,
       Password: hash,
       Birthday: req.body.dob,
+      Image: req.body.Image,
     },
   })
     .spread((user, created) => {
@@ -281,7 +282,7 @@ app.get('/userevents', (req, res) => {
         hostName = user.Name;
         Event.findAll({ where: { host: hostName } }).then((events) => {
           console.log(events);
-          
+
           res.status(200).send(events.concat(guestEvents));
         }, (err) => {
           console.log('error find userevents:', err);
@@ -396,6 +397,18 @@ io.on('connection', (currentSocket) => {
   //     isInitialConnection = true;
   //   });
   // }
+  currentSocket.on('open', (data) => {
+    Message.findAll({ where: { Event: data.event } }).then((messages) => {
+      messages.forEach((message) => {
+        const messageToSend = {
+          handle: message.Handle,
+          message: message.Message,
+          event: message.Event,
+        }
+        currentSocket.emit('chat', messageToSend);
+      });
+    });
+  });
 
   currentSocket.on('chat', (data) => {
     Message.create({ Handle: data.handle, Message: data.message, Event: data.event })
