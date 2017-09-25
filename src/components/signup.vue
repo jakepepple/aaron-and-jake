@@ -36,7 +36,7 @@
             <b-form-input type="date" v-model="signUpForm.dob"  placeholder="DOB" required/>
             </b-form-group>
             
-             <b-form-select v-model="signUpForm.gender" >
+            <b-form-select v-model="signUpForm.gender" >
         <option >male</option>
         <option>female</option>
     </b-form-select>
@@ -71,15 +71,12 @@ export default {
                 for( var i = 0; i < response.body.length; i++){
                     if(this.signUpForm.gender === response.body[i].gender){
                         this.signUpForm.Image = response.body[i].avatars[1].url;
+                        console.log(this.signUpForm.Image)
                         return;
                     }
-
                 }
-                 
-             
-             })
-               
-
+                })
+                .then(function(){
 
             this.$http.post('/signup', {
                 name: this.signUpForm.name,
@@ -93,6 +90,7 @@ export default {
                 this.signUpForm.password = ''
                 this.signUpForm.city = ''
                 this.signUpForm.email = ''
+            })
             })
         }
     },
