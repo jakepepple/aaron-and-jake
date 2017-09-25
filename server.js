@@ -79,7 +79,7 @@ passport.use('json', new JsonStrategy({
   passReqToCallback: true,
 }, (req, username, password, done) => {
   User.findOne({ where: { email: username } }).then((user) => {
-    console.log('authenticating');
+    // console.log('authenticating');
     if (!user) {
       console.log('no user');
       return done(null, false, { message: 'No user with that email in directory.' });
@@ -102,7 +102,7 @@ passport.use('json', new JsonStrategy({
 passport.use('local', new LocalStrategy({
   usernameField: 'email',
 }, (username, password, done) => {
-  console.log('local authenticate', username);
+  // console.log('local authenticate', username);
   User.findOne({ email: username }, (err, user) => {
     if (err) {
       return done(err);
@@ -127,35 +127,33 @@ app.use(passport.session());
 // Routes:
 
 app.get('/', (req, res) => {
-  console.log('sent with app.get');
+  // console.log('sent with app.get');
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-
+// Data for Map
 app.get('/browse', (req, res) => {
-  // IN PROGRESS
   Event.findAll().then((events) => {
     // console.log(events);
     res.status(200).send(events);
   });
 });
 
+// Check login credentials
 app.post('/login', passport.authenticate('json', { failureRedirect: '/#/login' }), (req, res) => {
-  // IN PROGRESS
-
   store.set(req.sessionID, { userID: req.user.dataValues.id });
-
   res.cookie('user', req.user.dataValues.id);
-
   res.status(201).send('successfully logged in');
 });
 
+// Get profile info
 app.get('/profile', (req, res) => {
   passport.authenticate('local');
-
   if (req.user) {
+    // find user information from DB
     User.findOne({ where: { id: req.user.dataValues.id } })
       .then((user) => {
+        // avoid sending password
         const dataToSend = {
           id: user.id,
           Name: user.Name,
@@ -170,15 +168,16 @@ app.get('/profile', (req, res) => {
         res.status(200).send(dataToSend);
       });
   } else {
+    // redirect if not logged in
     res.status(401).send('Go log in first!');
   }
 });
 
+// Create a new user in DB
 app.post('/signup', (req, res) => {
   const hash = passwordHash.generate(req.body.password);
-  // TEST password-hash
-
   User.findOrCreate({
+    // don't duplicate an entry that already exists (email check)
     where: { Email: req.body.email },
     defaults: {
       Name: req.body.name,
@@ -201,9 +200,9 @@ app.post('/signup', (req, res) => {
     });
 });
 
+// Create new event in DB
 app.post('/create', (req, res) => {
   passport.authenticate('local');
-  // console.log(req.session, req.cookies.user);
   if (!req.cookies.user) {
     res.status(401).send('Need to log in first!');
   }
@@ -213,22 +212,19 @@ app.post('/create', (req, res) => {
   } = req.body;
   User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
     host = user.Name;
-    console.log('host:', host);
     // Calculate Latitude and Longitude, City, Zip from this address
     googleMapsClient.geocode({
       address: location,
     }, (err, response) => {
-      console.log('mapped');
+      // console.log('mapped');
       if (err) {
         console.log(err);
       } else {
         const resultObj = response.json.results[0];
         const addressComponents = resultObj.address_components;
-        // console.log(addressComponents);
-
+        // addressComponents[3] is City, addressComponents[7] is Zip
         const latitude = resultObj.geometry.location.lat;
         const longitude = resultObj.geometry.location.lng;
-
         // console.log(name, meal, latitude, longitude, host);
         Event.create({
           Name: name,
@@ -242,6 +238,7 @@ app.post('/create', (req, res) => {
           Time: time,
           Host: host,
         }).then(() => {
+          // send back created event if needed
           Event.find({ where: { Name: name } }).then((event) => {
             res.status(201).send(event);
           }, (error) => {
@@ -256,19 +253,23 @@ app.post('/create', (req, res) => {
     });
   }, (userErr) => {
     console.log(userErr);
-    res.status(500).send(userErr);
+    res.status(500).send('error creating user');
   });
 });
 
+// Get all events from DB
 app.get('/events', (req, res) => {
   Event.findAll().then((events) => {
-    // console.log(events);
     res.status(200).send(events);
-  });
+  })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send('error fetching events from DB');
+    });
 });
 
+// Get only events for which user is host or guest
 app.get('/userevents', (req, res) => {
-  console.log('/userevents', req.cookies.user);
   if (req.user) {
     const guestEvents = [];
     Event.findAll().then((events) => {
@@ -281,28 +282,28 @@ app.get('/userevents', (req, res) => {
       });
     }).then(() => {
       let hostName;
-      User.findOne({ where: { id: parseInt(req.cookies.user) } }).then((user) => {
+      User.findOne({ where: { id: req.user.dataValues.id } }).then((user) => {
         hostName = user.Name;
         Event.findAll({ where: { host: hostName } }).then((events) => {
-          console.log(events);
-
           res.status(200).send(events.concat(guestEvents));
         }, (err) => {
-          console.log('error find userevents:', err);
-          res.status(500).send(err);
+          console.log(err);
+          res.status(500).send('error finding users events');
         });
       });
     });
   } else {
+    // User not signed in
     res.status(401).send('log in first');
   }
 });
 
+// Make a request to join event
 app.post('/request', (req, res) => {
   if (!req.user) {
+    // User not signed in
     res.status(401).send('log in first!');
   } else {
-    // console.log(req.body, req.user);
     const partyName = req.body.name;
     let host;
     const request = `${partyName}:${req.user.dataValues.Name}`;
@@ -317,14 +318,14 @@ app.post('/request', (req, res) => {
           } else {
             currentNotifications = `${request}`;
           }
-          console.log('current notifications: ', currentNotifications);
+          // console.log('current notifications: ', currentNotifications);
         })
           .then(() => {
             User.update({ Notifications: currentNotifications }, { where: { Name: host } })
               .then((affectedRows) => {
-                console.log('user notifications: ', affectedRows);
+                console.log('rows updated: ', affectedRows);
                 res.status(201).send('Request successfully made');
-              });
+              })
           })
           .catch((err) => {
             console.log('error in making request:', err);
@@ -334,8 +335,10 @@ app.post('/request', (req, res) => {
   }
 });
 
+// Get notifications for user profile
 app.get('/notifications', (req, res) => {
   if (!req.user) {
+    // User not logged in
     res.status(401).send('login first');
   } else {
     User.findOne({ where: { Name: req.user.dataValues.Name } }).then((user) => {
@@ -343,13 +346,13 @@ app.get('/notifications', (req, res) => {
         res.status(200).send('no notifications!');
       } else {
         const notifications = user.Notifications.split(',');
-        console.log(notifications);
         res.status(200).send(notifications);
       }
     });
   }
 });
 
+// Approve join event request
 app.post('/approve', (req, res) => {
   let currentContributors;
   Event.findOne({ where: { Name: req.body.eventName } }).then((event) => {
@@ -375,7 +378,8 @@ app.post('/approve', (req, res) => {
       });
     })
     .catch((err) => {
-      res.status(500).send('error approving requesT:', err);
+      console.log(err);
+      res.status(500).send('error approving request');
     });
 });
 
@@ -388,8 +392,9 @@ const server = app.listen(port, () => {
 // Set up socket
 const io = socket(server);
 
+// connect to socket from profile
 io.on('connection', (currentSocket) => {
-  console.log('made currentSocket connection', currentSocket.id);
+  // Initial connection, load past messages in event chat
   currentSocket.on('open', (data) => {
     Message.findAll({ where: { Event: data.event } }).then((messages) => {
       messages.forEach((message) => {
@@ -402,7 +407,8 @@ io.on('connection', (currentSocket) => {
       });
     });
   });
-
+  
+  // User submits message, save to db and emit to others
   currentSocket.on('chat', (data) => {
     Message.create({ Handle: data.handle, Message: data.message, Event: data.event })
       .then(() => {
@@ -411,14 +417,10 @@ io.on('connection', (currentSocket) => {
         console.log(err);
       });
   });
+  // 'User is typing...'
   currentSocket.on('typing', (data) => {
     currentSocket.broadcast.emit('typing', data);
   });
 });
-
-// TEST SERVER
-// app.listen(80, 'localhost', function() {
-//   console.log('successfully hosting on 3001');
-// })
 
 module.exports.server = server;
