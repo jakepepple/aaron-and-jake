@@ -325,7 +325,6 @@ app.get('/notifications', (req, res) => {
     res.status(401).send('login first');
   } else {
     User.findOne({ where: { Name: req.user.dataValues.Name } }).then((user) => {
-<<<<<<< HEAD
       if (!user.Notifications) {
         res.status(200).send('no notifications!');
       } else {
@@ -333,11 +332,6 @@ app.get('/notifications', (req, res) => {
         console.log(notifications);
         res.status(200).send(notifications);
       }
-=======
-      const notifications = user.Notifications.split(',');
-      console.log(notifications);
-      res.status(200).send(notifications);
->>>>>>> Button added to google map marker
     });
   }
 });
