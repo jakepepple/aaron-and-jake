@@ -3,13 +3,13 @@
        
 						
         <b-row>
-            <div class="col-lg-12 col-sm-6">
+            <div class="col-lg-12">
                 <div class="card hovercard">
                     <div class="card-background">
                         <img class="card-bkimg" alt="" src="https://scontent-dft4-3.xx.fbcdn.net/v/t1.0-9/10447708_10105496802291065_3147331436798292945_n.jpg?oh=ff797fce9d955f7447e90ee529022d1c&oe=5A420D4C">
                     </div>
                     <div class="useravatar">
-                        <img alt="" src={{this.data.image}}>
+                        <img alt="" v-bind:src="data.image">
                     </div>
                     <div class="card-info">
                         <span class="card-title">{{this.data.profileName}}</span>

@@ -1,9 +1,7 @@
 <template>
     <div id="app" >
-        <p>Home Page</p>
-        <div>
-            <span>Change my color</span>
-            <button></button>
+        <img src="../assets/splashPage.png" class="full-width-div" alt="">
+  
 
 
         </div>
@@ -16,15 +14,17 @@
 export default {
     data() {
         return {
-            test: 'green',
-            styleObject: {
-                'color': "yellow"
-            }
+            
         }
     },
 }
 </script>
 
 <style>
+.full-width-div {
+    position: absolute;
+    width: 100%;
+    left: 0;
+}
 
 </style>

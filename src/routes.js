@@ -8,7 +8,7 @@ import browse from './components/browse.vue';
 import chat from './components/chatBox.vue';
 
 export default [
-  { path: '/home', component: home },
+  { path: '/', component: home },
   { path: '/profile', component: profile },
   { path: '/login', component: login },
   { path: '/event', component: event },
