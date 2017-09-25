@@ -36,6 +36,10 @@
             <b-form-input type="date" v-model="signUpForm.dob"  placeholder="DOB" required/>
             </b-form-group>
             
+             <b-form-select v-model="signUpForm.gender" >
+        <option >male</option>
+        <option>female</option>
+    </b-form-select>
             <b-button @click.prevent="signUp">Sign Up</b-button>
         </b-form>
     </b-jumbotron>
@@ -53,6 +57,7 @@ export default {
                 city: '',
                 email: '',
                 dob: '',
+                Image: '',
 
             },
 
@@ -61,12 +66,28 @@ export default {
     },
     methods: {
         signUp() {
+            this.$http.get('https://tinyfac.es/api/users')
+             .then(function(response) {
+                for( var i = 0; i < response.body.length; i++){
+                    if(this.signUpForm.gender === response.body[i].gender){
+                        this.signUpForm.Image = response.body[i].avatars[1].url;
+                        return;
+                    }
+
+                }
+                 
+             
+             })
+               
+
+
             this.$http.post('/signup', {
                 name: this.signUpForm.name,
                 password: this.signUpForm.password,
                 city: this.signUpForm.city,
                 email: this.signUpForm.email,
                 dob: this.signUpForm.dob,
+                Image: this.signUpForm.Image,
             }).then(function(data, status, request) {
                 this.signUpForm.name = '';
                 this.signUpForm.password = ''
