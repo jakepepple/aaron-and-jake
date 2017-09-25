@@ -102,7 +102,9 @@ export default {
             })
         this.$http.get('/notifications')
             .then(function(response) {
-                console.log(response.body);
+                if (!response.body.notifications) {
+                    return;
+                }
                 let notificationDataPairs = [];
                 const notifications = response.body;
                 const formattedNotifications = notifications.map((notification) => {
@@ -127,7 +129,8 @@ export default {
                 eventName: data[0],
                 approvedUser: data[1],
             }).then((response) => {
-                this.notifications = 'approved!';
+                this.data.notifications.splice(index, 1);
+                this.data.notificationData.splice(index, 1);
             }).catch((err) => {
                 console.log('error approving request');
             })
