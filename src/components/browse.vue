@@ -22,6 +22,12 @@ export default {
             markers: [],
         }
     },
+    methods:{
+        clickeMe(){
+            console.log('confirm')
+        }
+
+    },
 
     mounted: function() {
         this.bounds = new google.maps.LatLngBounds();
@@ -49,6 +55,7 @@ export default {
                     '<h2>' + `${coord.event.Name}` + '</h2>' +
                     '<p>' + 'Host: ' + `${coord.event.Host}` + '</p>' +
                     '<p>' + 'Address: ' + `${coord.event.Address}` + '</p>' +
+                    '<button @click="clickMe()">' + 'click me' + '</button>' +
                     '</div>'
                     var infowindow = new google.maps.InfoWindow({
                         content: contentString
