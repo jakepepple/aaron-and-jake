@@ -26,10 +26,10 @@
                     <span class="title">Current City:</span> {{this.data.profileCity}}</p>
                 <p>
                     <span class="title">Date of birth:</span> {{this.data.birthday}}</p>
-                <p>
+                <!-- <p>
                     <span class="title">Host Rating:</span> {{this.data.profileHR}}</p>
                 <p>
-                    <span class="title">Guest Rating:</span> {{this.data.profileCR}}</p>
+                    <span class="title">Guest Rating:</span> {{this.data.profileCR}}</p> -->
             </b-col>
             <b-col class='profile-buttons'>
                 <h4>Notifications:</h4>
@@ -85,6 +85,7 @@ export default {
     mounted: function() {
         this.$http.get('/profile')
             .then(function(response) {
+                console.log(response.body);
                 this.data.profileName = response.body.Name;
                 this.data.profileCity = response.body.City;
                 this.data.profileEmail = response.body.Email;
