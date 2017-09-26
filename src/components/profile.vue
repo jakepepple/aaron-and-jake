@@ -52,7 +52,7 @@
             </b-col>
         </b-row>
         <b-row>
-            <eventdiv v-if="showEvent" v-bind:event="event"></eventdiv>
+            <eventdiv v-if="showEvent" v-bind:event="event" v-bind:name="this.data.profileName"></eventdiv>
         </b-row>
          
 

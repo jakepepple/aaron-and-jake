@@ -30,6 +30,7 @@ export default {
     },
 
     mounted: function() {
+        const socket = io.connect('http://localhost:3001');
         this.bounds = new google.maps.LatLngBounds();
         const element = document.getElementById(this.mapName)
         const mapCentre = this.markerCoordinates[0]
@@ -41,8 +42,7 @@ export default {
 
         this.$http.get('/browse')
             .then(function(response) {
-                let arr = []
-                console.log(response.body)
+                let arr = [];
                 response.body.forEach(function(element) {
                     let tempLat = element.LocationLat;
                     let tempLong = element.LocationLng;
@@ -74,6 +74,9 @@ export default {
                             context.$http.post('/request', {
                                 name: marker.event.Name,
                             }).then(function(response) {
+                                socket.emit('request', {
+                                    eventName: marker.event.Name,
+                                })
                                 console.log(response);
                             })
                         

@@ -7,7 +7,7 @@
                     
     
 
-                    <chat v-if="showModal" v-bind:event='event' @close="showModal = false">
+                    <chat v-if="showModal" v-bind:event='event' v-bind:name='name' @close="showModal = false">
                         <h3 slot="header">{{event.Name}}</h3>
                     </chat>
                 </div>
@@ -49,7 +49,7 @@ export default {
         mapMarkerData: mapMarkerData,
     },
     name: 'google-map',
-    props: ['event'],
+    props: ['event', 'name'],
     data() {
         return {
             meal: '',

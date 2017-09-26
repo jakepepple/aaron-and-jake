@@ -18,7 +18,7 @@
             <div id="output"></div>
             <div id="feedback"></div>
         </div>
-        <input id="handle" type="text" placeholder="Handle">
+        <p id="handle">{{name}}</p>
         <input id="message" type="text" placeholder="Message">
         <b-btn id="send">Send</b-btn>
     </div>
@@ -47,7 +47,7 @@
 // Imports
 export default {
   props: [
-    'event'
+    'event', 'name'
   ],
     data() {
         return {
@@ -55,6 +55,7 @@ export default {
         }
     },
     mounted() {
+      console.log(this.name);
         const socket = io.connect('http://localhost:3001');
 
 
@@ -73,13 +74,13 @@ export default {
         btn.addEventListener('click', () => {
             socket.emit('chat', {
                 message: message.value,
-                handle: handle.value,
+                handle: this.name,
                 event: eventName,
             });
         });
 
         message.addEventListener('keypress', () => {
-            socket.emit('typing', handle.value);
+            socket.emit('typing', this.name);
         });
 
 

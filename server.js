@@ -197,6 +197,10 @@ app.post('/signup', (req, res) => {
       } else {
         res.status(200).send(user.get({ plain: true }));
       }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send('error signing up');
     });
 });
 
@@ -325,7 +329,7 @@ app.post('/request', (req, res) => {
               .then((affectedRows) => {
                 console.log('rows updated: ', affectedRows);
                 res.status(201).send('Request successfully made');
-              })
+              });
           })
           .catch((err) => {
             console.log('error in making request:', err);
@@ -407,7 +411,7 @@ io.on('connection', (currentSocket) => {
       });
     });
   });
-  
+
   // User submits message, save to db and emit to others
   currentSocket.on('chat', (data) => {
     Message.create({ Handle: data.handle, Message: data.message, Event: data.event })
@@ -420,6 +424,10 @@ io.on('connection', (currentSocket) => {
   // 'User is typing...'
   currentSocket.on('typing', (data) => {
     currentSocket.broadcast.emit('typing', data);
+  });
+
+  currentSocket.on('request', (data) => {
+    console.log(data.eventName);
   });
 });
 
